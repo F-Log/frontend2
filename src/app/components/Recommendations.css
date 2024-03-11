@@ -1,0 +1,29 @@
+.recommendation-item {
+    width: 100px; /* 추천 식단 이미지의 너비 */
+    height: 100px; /* 추천 식단 이미지의 높이 */
+    background-size: cover; /* 이미지가 요소를 꽉 채우도록 설정 */
+    background-position: center; /* 이미지가 요소의 중앙에 위치하도록 설정 */
+    border-radius: 10px; /* 이미지 모서리를 둥글게 */
+    margin: 10px; /* 주위와의 간격 */
+  }
+  
+  .fish {
+    background-image: url('/img/fish.jpg'); /* 이미지 경로 설정 */
+  }
+  
+  .salad {
+    background-image: url('/img/salad.jpg');
+  }
+  
+  .nuts {
+    background-image: url('/img/nuts.jpg');
+  }
+  
+  .avocado {
+    background-image: url('/img/avocado.jpg');
+  }
+  
+  .kochi {
+    background-image: url('/img/kkongchi.jpg');
+  }
+  
