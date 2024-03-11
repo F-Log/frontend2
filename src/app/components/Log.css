@@ -1,0 +1,52 @@
+.log-page {
+    margin: auto;
+    width: 80%;
+    padding: 20px;
+  }
+  
+  .nutrition-bar-container {
+    margin: 10px 0;
+  }
+  
+  .nutrition-bar-label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .nutrition-bar {
+    height: 20px;
+    width: 60%;
+    background-color: #eee;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .nutrition-bar-fill {
+    height: 100%;
+    background-color: blue;
+    position: absolute;
+  }
+  
+  .nutrition-bar-overflow {
+    height: 100%;
+    background-color: red;
+    position: absolute;
+    left: 0;
+  }
+  
+  .nutrition-bar-percentage {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  
+  .advice-section {
+    margin-top: 20px;
+  }
+  
+  .advice-text {
+    background-color: #ccf;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  
