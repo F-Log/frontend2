@@ -1,6 +1,8 @@
 import styles from "./forms.css";
 import { useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
 
 export default function Register(){
   const navigate = useNavigate();
@@ -10,20 +12,29 @@ export default function Register(){
   const [passwordcon, setPasswordcon] = useState('');
   const [gender, setGender] = useState(''); // State for gender selection
   const [isRegistered, setIsRegistered] = useState(false);
-
-  const handleRegister = () => {
-    if (id && password && passwordcon && gender && (password === passwordcon)) {
-      setIsRegistered(true);
-      alert('회원가입이 완료되었습니다. OK!');
-      navigate('/');
+    const handleRegister = () => {
+      if (id && password && passwordcon && (password === passwordcon)) {
+        axios
+        .post("http://localhost:8080/api/v1/members/new", { // 실제 요청 URL로 교체해야 합니다.
+          loginId: id,
+          password: password,
+        })
+        .then((response) => {
+          setIsRegistered(true);
+          alert("회원가입이 완료되었습니다. OK!");
+          navigate("/"); // 성공 시 홈 페이지로 리다이렉션
+        })
+        .catch((error) => {
+          console.error("회원가입 중 오류 발생:", error);
+          alert("회원가입에 실패했습니다.");
+        });
     } else {
-      alert('모든 필수 정보를 입력해주세요.');
+      alert("ID와 비밀번호를 모두 입력해주세요. 비밀번호가 일치하는지 확인해주세요.");
     }
-  };
-
-  return (
-    <>
-      <section className="text-gray-600 body-font relative bg-white w-[95%] mx-auto mt-5">
+    };
+    return (
+        <>
+        <section className="text-gray-600 body-font relative bg-white w-[95%] mx-auto mt-5">
         <div classNameName="container px-5 py-24 mx-auto">
           <div className="flex flex-col text-center w-full mb-12">
             <a className="flex title-font font-medium items-center text-gray-900 mb-0 mx-auto">
