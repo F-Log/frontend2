@@ -1,6 +1,8 @@
 import styles from "./forms.css";
 import { useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
 
 export default function Register(){
   const navigate = useNavigate();
@@ -12,14 +14,23 @@ export default function Register(){
   
     const handleRegister = () => {
       if (id && password && passwordcon && (password === passwordcon)) {
-        // 웹 서버가 구현되면, 여기에 회원탈퇴를 요청하는 코드를 추가하세요.
-        // 예: API 호출
-        setIsRegistered(true); // 이 예제에서는 단순히 상태를 변경합니다.
-        alert('회원가입이 완료되었습니다. OK!');
-        navigate('/');
-      } else {
-        alert('ID와 비밀번호를 모두 입력해주세요.');
-      }
+        axios
+        .post("http://localhost:8080/api/v1/members/new", { // 실제 요청 URL로 교체해야 합니다.
+          loginId: id,
+          password: password,
+        })
+        .then((response) => {
+          setIsRegistered(true);
+          alert("회원가입이 완료되었습니다. OK!");
+          navigate("/"); // 성공 시 홈 페이지로 리다이렉션
+        })
+        .catch((error) => {
+          console.error("회원가입 중 오류 발생:", error);
+          alert("회원가입에 실패했습니다.");
+        });
+    } else {
+      alert("ID와 비밀번호를 모두 입력해주세요. 비밀번호가 일치하는지 확인해주세요.");
+    }
     };
     return (
         <>
