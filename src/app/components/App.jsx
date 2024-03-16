@@ -17,6 +17,7 @@ import Header from './header';
 import Login from './login';
 import Mypage from './mypage';
 import Register from './register';
+import UpdatePass from './components/updatepass';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/setting" element={<Setting />} />
           <Route path="/changepw" element={<ChangePw />} />
           <Route path="/deleteaccount" element={<DeleteAccount />} />
+          <Route path="/update-password" element={<UpdatePass />} /> 
         </Routes>
         </section>
       </div>
