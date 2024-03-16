@@ -104,6 +104,12 @@ function Search() {
     setIsPopupOpen(true);
   };
 
+  const handleMake = (term) => {
+    setSearchTerm(term);
+    setRecentSearches(prevSearches => [...prevSearches, term]);
+    setIsPopupOpen(true);
+  };
+
   const handleSaveFood = (foodData) => {
     setTodaysMeals(prevMeals => [...prevMeals, foodData]);
     setIsPopupOpen(false);
@@ -120,6 +126,8 @@ function Search() {
       />
       <button onClick={() => handleSearch(searchTerm)}
       className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">검색</button>
+      <button onClick={() => handleMake(searchTerm)}
+      className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">사용자 지정 추가</button>
 
       {isPopupOpen && (
         <FoodInputPopup 
