@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from "./FoodContext";
 
 function Header() {
   const [showSubMenu, setShowSubMenu] = useState(false);
   const navigate = useNavigate();
+  const { userUuid } = useUser();
 
   return (
     <header className="text-gray-600 body-font bg-white">
@@ -30,6 +32,10 @@ function Header() {
         <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => navigate('/')}>Log out</button>
         <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5" onClick={() => navigate('/setting')}>Setting</button>
       </div>
+      {/* 디버깅용
+      <div>
+        ${userUuid}
+            </div>*/}
     </header>
   );
 }

@@ -1,24 +1,41 @@
 import styles from "./forms.css";
 import { useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "./FoodContext";
+import axios from "axios";
 
 export default function Login(){
+  const { userUuid } = useUser();
   const navigate = useNavigate();
   const inref = useRef(null);
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  //const [loginId, setloginId] = useState('');
+  const [idcon, setIdcon] = useState('');
+  const [passwordcon, setPasswordcon] = useState('');
   const [isLogined, setIsLogined] = useState(false);
   
     const handleLogin = () => {
-      if (id && password) {
-        // 웹 서버가 구현되면, 여기에 회원탈퇴를 요청하는 코드를 추가하세요.
-        // 예: API 호출
-        setIsLogined(true); // 이 예제에서는 단순히 상태를 변경합니다.
-        alert('로그인이 완료되었습니다. OK!');
+      axios
+    .get(`http://localhost:8080/api/v1/members/${userUuid}`, {})
+    //.get(`http://localhost:8080/api/v1/members/${id}`, {}) 아이디를 통한 패스워드 가져오기 성공시
+    .then((response) => {
+      setIdcon(response.data.loginId);
+      setPasswordcon(response.data.password);
+      
+      // ID와 비밀번호 검증 로직을 axios.get의 결과 처리 내부로 이동
+      if ((id === response.data.loginId) && (password === response.data.password)) {
+        setIsLogined(true);
+        alert(`로그인이 완료되었습니다. OK!`);
         navigate('/home');
       } else {
-        alert('ID와 비밀번호를 모두 입력해주세요.');
+        alert(`ID와 비밀번호를 모두 입력해주세요.`);
       }
+    })
+    .catch((error) => {
+      console.error("로그인 중 오류 발생:", error);
+      alert("로그인 실패: 서버 오류");
+    });
     };
 
     return (

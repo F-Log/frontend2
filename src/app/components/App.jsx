@@ -19,7 +19,6 @@ import Mypage from './mypage';
 import Register from './register';
 
 function App() {
-
   return (
     <FoodProvider>
     <Router>

@@ -1,4 +1,5 @@
 import styles from "./forms.css";
+import { useUser } from "./FoodContext";
 import { useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -7,9 +8,12 @@ import axios from "axios";
 export default function Register(){
   const navigate = useNavigate();
   const inref = useRef(null);
+  const {setUserUuid} = useUser();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [passwordcon, setPasswordcon] = useState('');
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
   const [gender, setGender] = useState(''); // State for gender selection
   const [isRegistered, setIsRegistered] = useState(false);
     const handleRegister = () => {
@@ -18,15 +22,19 @@ export default function Register(){
         .post("http://localhost:8080/api/v1/members/new", { // 실제 요청 URL로 교체해야 합니다.
           loginId: id,
           password: password,
+          age: age,
+          name: name,
+          gender: gender
         })
         .then((response) => {
           setIsRegistered(true);
-          alert("회원가입이 완료되었습니다. OK!");
+          setUserUuid(response.data.uuid);
+          alert(`회원가입이 완료되었습니다. OK!`);
           navigate("/"); // 성공 시 홈 페이지로 리다이렉션
         })
         .catch((error) => {
           console.error("회원가입 중 오류 발생:", error);
-          alert("회원가입에 실패했습니다.");
+          alert(`회원가입에 실패했습니다.`);
         });
     } else {
       alert("ID와 비밀번호를 모두 입력해주세요. 비밀번호가 일치하는지 확인해주세요.");
@@ -73,26 +81,32 @@ export default function Register(){
 
               <div className="p-2 w-full">
                 <div className="relative mx-auto w-1/2">
-                  <input ref={inref} type="username" id="user_name" name="user_name" className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="이름" />
+                  <input ref={inref} type="username" id="user_name" name="user_name" className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="이름"
+                value={name} 
+                onChange={(e) => setName(e.target.value)}/>
                 </div>
               </div>
               <div className="p-2 w-full">
                 <div className="relative mx-auto w-1/2">
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  >
-                    <option value="">성별 선택</option>
-                    <option value="female">여성</option>
-                    <option value="male">남성</option>
-                  </select>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                >
+                  <option value="">성별 선택</option>
+                  <option value="FEMALE"
+                  onChange={(e) => setGender(e.target.value)}>여성</option>
+                  <option value="MALE"
+                  onChange={(e) => setGender(e.target.value)}>남성</option>
+                </select>
                 </div>
               </div>
 
               <div className="p-2 w-full">
                 <div className="relative mx-auto w-1/2">
-                  <input ref={inref} type="age" id="user_age" name="user_age" className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="나이" />
+                  <input ref={inref} type="age" id="user_age" name="user_age" className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="나이"
+                  value = {age}
+                  onChange={(e) => setAge(e.target.value)} />
                 </div>
               </div>
 
