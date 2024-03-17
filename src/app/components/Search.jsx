@@ -212,22 +212,41 @@ function Search() {
 
   const fetchRelatedSearches = async (searchTerm) => {
     try {
-      const response = await axios.get("http://localhost:8080/api/v1/food/search", {
-        params: { // 'params' 객체를 사용하여 쿼리 매개변수 전달
-          foodName: searchTerm,
-          size: 100
-        }
+      // 사용자 지정 검색 결과
+      const response1 = await axios.get("http://localhost:8080/api/v1/food/search", {
+        params: { foodName: searchTerm, memberUuid: userUuid, size: 100000 }
       });
-      // 서버 응답에서 필요한 정보만 추출하여 상태 업데이트
-      const relatedSearches = response.data.content.map(item => ({
-        foodName: item.foodName,
-        foodUuid: item.foodUuid
+      
+      // 일반 검색 결과
+      const response = await axios.get("http://localhost:8080/api/v1/food/search", {
+        params: { foodName: searchTerm, size: 100000 }
+      });
+      
+      // 사용자 지정 검색 결과에 isUserDefined: true 추가
+      const userSearchesWithFlag = response1.data.content.map(item => ({
+        ...item,
+        isUserDefined: true
       }));
-      setRelatedSearches(relatedSearches);
+
+      // 일반 검색 결과에 isUserDefined: false 추가
+      const generalSearchesWithFlag = response.data.content.map(item => ({
+        ...item,
+        isUserDefined: false
+      }));
+      
+      // 차집합 계산 및 최상단에 배치
+      const uniqueUserSearches = userSearchesWithFlag.filter(r1Item =>
+        !generalSearchesWithFlag.some(rItem => rItem.foodUuid === r1Item.foodUuid)
+      );
+      
+      const finalSearchResults = [...uniqueUserSearches, ...generalSearchesWithFlag];
+  
+      // 최종 결과 업데이트
+      setRelatedSearches(finalSearchResults);
     } catch (error) {
-      console.error(`연관 검색어를 가져오는 데 실패했습니다: ${searchTerm}`, error);
+      console.error(`Failed to fetch related searches: ${searchTerm}`, error);
     }
-  };
+};
 
 
   const handleSaveFood = async (updatedFoodData) => {
@@ -252,7 +271,24 @@ function Search() {
           notes: ""
         });
         console.log('Food logged:', response.data);
-        updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+
+        //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+        const newUpdatedFoodData = {
+          ...updatedFoodData,
+          dietfoodUuid: response.data.dietfoodUuid
+      };
+
+        if (editedMealIndex !== null) {
+          // 기존 식단 항목을 업데이트하는 경우
+          setTodaysMeals(prevMeals =>
+              prevMeals.map((meal, index) =>
+                  index === editedMealIndex ? { ...meal, ...newUpdatedFoodData } : meal
+              )
+          );
+      } else {
+          // 새 식단 항목을 추가하는 경우
+          setTodaysMeals(prevMeals => [...prevMeals, { ...newUpdatedFoodData, id: prevMeals.length }]);
+      }
       } catch (error) {
         // Handle the error if the POST request fails
         console.error('Failed to log food:', error);
@@ -298,6 +334,75 @@ function Search() {
 
       //setTodaysMeals(prevMeals => [...prevMeals, { ...updatedFoodData, id: prevMeals.length }]);
     }
+    // 팝업 닫기 및 편집 인덱스 초기화
+    setIsPopupOpen(false);
+    setIsNewPopupOpen(false);
+    setEditedMealIndex(null);
+  };
+
+
+  const handleCreateFood = async (updatedFoodData) => {
+    let newUpdatedFoodData = {...updatedFoodData};
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/food/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
+        foodName: updatedFoodData.foodName,
+        servingUnit: updatedFoodData.amount,
+        calories: updatedFoodData.energy,
+        carbohydrate: updatedFoodData.carbs,
+        fat: updatedFoodData.fat,
+        protein: updatedFoodData.protein,
+        memberUuid: userUuid
+      });
+      console.log('Food appended:', response.data);
+      //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+      newUpdatedFoodData = {
+        ...updatedFoodData,
+        foodUuid: response.data.foodUuid
+        };
+      //setTodaysMeals(prevMeals => [...prevMeals, { ...newUpdatedFoodData, id: prevMeals.length }]);
+
+      
+    } catch (error) {
+      // Handle the error if the POST request fails
+      console.error('Failed to log food:', error);
+    }
+
+    const dietUuid = dietUuids[newUpdatedFoodData.mealType];
+    const foodUuid = newUpdatedFoodData.foodUuid; // 음식의 uuid를 가져옵니다.
+  
+    
+    console.log(`식사 유형 ${newUpdatedFoodData.mealType}에 대한 post dietUuid: `, dietUuid, `음식 uuid: `, foodUuid);
+    try {
+      const dietResponse = await axios.post("http://localhost:8080/api/v1/dietfoods/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
+        foodUuid: foodUuid,
+        dietUuid: dietUuid,
+        quantity: newUpdatedFoodData.amount,
+        notes: ""
+      });
+      console.log('Food logged:', dietResponse.data);
+      //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+      newUpdatedFoodData.dietfoodUuid = dietResponse.data.dietfoodUuid;
+      setTodaysMeals(prevMeals => [...prevMeals, newUpdatedFoodData]);
+      // If the POST request is successful, update the meals list
+      /*
+      if (editedMealIndex !== null) {
+        // Update an existing meal
+        setTodaysMeals(prevMeals =>
+          prevMeals.map((meal, index) =>
+            index === editedMealIndex ? { ...meal, ...updatedFoodData } : meal
+          )
+        );
+      } else {
+        // Add a new meal if none is being edited
+        setTodaysMeals(prevMeals => [...prevMeals, { ...updatedFoodData, id: prevMeals.length }]);
+      }*/
+    } catch (error) {
+      // Handle the error if the POST request fails
+      console.error('Failed to log food:', error);
+    }
+
+    //setTodaysMeals(prevMeals => [...prevMeals, { ...updatedFoodData, id: prevMeals.length }]);
+    
     // 팝업 닫기 및 편집 인덱스 초기화
     setIsPopupOpen(false);
     setIsNewPopupOpen(false);
@@ -439,7 +544,18 @@ function Search() {
       console.error('Failed to delete food:', error);
     }
   };
-  
+
+  const handleDeleteSearch = async (foodUuid) => {
+    try {
+      // 서버에 삭제 요청
+      console.log(`음식정보 딜리트 foodUuid: `, foodUuid)
+      await axios.delete(`http://localhost:8080/api/v1/food/${foodUuid}`);
+      // 성공적으로 삭제되면, 클라이언트 측 상태 업데이트
+      setRelatedSearches(relatedSearches.filter(search => search.foodUuid !== foodUuid));
+    } catch (error) {
+      console.error(`Failed to delete the search with UUID: ${foodUuid}`, error);
+    }
+  };
 
   return (
     <section className="text-gray-600 body-font relative bg-white w-[95%] mx-auto mt-5">
@@ -454,7 +570,7 @@ function Search() {
       className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">검색</button>
       <button onClick={() => handleMake(searchTerm)}
       className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">사용자 지정 추가</button>
-
+{/*
       <div className="related-searches-container">
         <h2>연관 검색어</h2>
         <div className="related-searches-scrollable">
@@ -468,7 +584,21 @@ function Search() {
             </button>
           ))}
         </div>
-      </div>
+          </div>*/}
+          <div className="related-searches-container">
+            <h2>연관 검색어</h2>
+            <div className="related-searches-scrollable">
+              {relatedSearches.map((search) => (
+                <div key={search.foodUuid} className="related-search-item">
+                  {search.foodName}
+                  {/* 사용자가 지정한 검색어일 경우에만 삭제 버튼을 렌더링 */}
+                  {search.isUserDefined && (
+                    <button onClick={() => handleDeleteSearch(search.foodUuid)}>삭제</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
 
       {isPopupOpen && (
@@ -484,7 +614,7 @@ function Search() {
           foodData={newFoodData}
           setFoodData={setNewFoodData} // Pass the setter function as a prop
           onClose={() => setIsNewPopupOpen(false)}
-          onSave={handleSaveFood}
+          onSave={handleCreateFood}
         />
       )}
       {/* 미사용 코드
