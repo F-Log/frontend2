@@ -17,7 +17,7 @@ import Header from './header';
 import Login from './login';
 import Mypage from './mypage';
 import Register from './register';
-import UpdatePass from './components/updatepass';
+import UpdatePass from './updatepass';
 
 function App() {
   return (
