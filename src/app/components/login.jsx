@@ -15,28 +15,26 @@ export default function Login(){
   const [passwordcon, setPasswordcon] = useState('');
   const [isLogined, setIsLogined] = useState(false);
   
-    const handleLogin = () => {
-      axios
-    .get(`http://localhost:8080/api/v1/members/${userUuid}`, {})
-    //.get(`http://localhost:8080/api/v1/members/${id}`, {}) 아이디를 통한 패스워드 가져오기 성공시
-    .then((response) => {
-      setIdcon(response.data.loginId);
-      setPasswordcon(response.data.password);
-      
-      // ID와 비밀번호 검증 로직을 axios.get의 결과 처리 내부로 이동
-      if ((id === response.data.loginId) && (password === response.data.password)) {
-        setIsLogined(true);
-        alert(`로그인이 완료되었습니다. OK!`);
-        navigate('/home');
-      } else {
-        alert(`ID와 비밀번호를 모두 입력해주세요.`);
-      }
+  const handleLogin = () => {
+    axios.post("http://localhost:8080/api/v1/members/login", {
+      loginId: id,
+      password: password
     })
-    .catch((error) => {
+    .then(response => {
+      // 성공적으로 로그인되면, 응답에서 uuid를 추출하여 로컬 스토리지에 저장
+      const { uuid, loginId } = response.data;
+      localStorage.setItem("userUuid", uuid);
+      localStorage.setItem("loginId", loginId);
+
+      alert("로그인이 완료되었습니다. OK!");
+      console.log(localStorage.getItem("userUuid"));
+      navigate("/home"); // 로그인 후 리디렉트할 경로
+    })
+    .catch(error => {
       console.error("로그인 중 오류 발생:", error);
-      alert("로그인 실패: 서버 오류");
+      alert("로그인 실패: " + (error.response?.data?.message || "서버 오류"));
     });
-    };
+  };
 
     return (
         <>
