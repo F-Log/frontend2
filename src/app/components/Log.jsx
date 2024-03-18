@@ -29,7 +29,21 @@ const LogPage = () => {
   const [recommendations, setRecommendations] = useState([]);
   const mealDate = new Date().toISOString().split('T')[0];
   const [dailyFeedback, setDailyFeedback] = useState({});
-  
+
+  const fetchAdvice = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
+        memberUuid: userUuid,
+        date: mealDate
+      });
+      console.log('Food feedback:', response.data);
+      setAdvice(response.data.content);
+    } catch (error) {
+      console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
+      setAdvice('피드백을 받아오는데 실패했습니다.');
+    }
+  };
+
 
   const handleGenerateAdvice = async (type) => {
     try {
@@ -76,13 +90,16 @@ const LogPage = () => {
         <NutritionBar label="|" percentage={75} />
       </div>
       <div className="advice-section">
-        <button onClick={() => handleGenerateAdvice('today')}
-        className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
-        >오늘</button>
-        <button onClick={() => handleGenerateAdvice('week')}
-        className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
-        >일주일</button>
-        <div className="advice-text">{advice}</div>
+        <div className="advice-header">
+          <h3 className="ai-advice">AI ADVICE</h3>
+          <div className="advice-buttons">
+            <button onClick={() => handleGenerateAdvice('today')}>오늘</button>
+            <button onClick={() => handleGenerateAdvice('week')}>일주일</button>
+          </div>
+        </div>
+        <div className="advice-text">
+          {advice}
+        </div>
       </div>
       <div className="recommendations-section">
         <button onClick={handleGenerateRecommendations}
