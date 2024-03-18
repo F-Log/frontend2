@@ -18,7 +18,7 @@ import Login from './login';
 import Mypage from './mypage';
 import Register from './register';
 import UpdatePass from './updatepass';
-import InbodyOcr from './inbodyOcr';
+import InbodyOcr from './InbodyOcr';
 
 
 function App() {
