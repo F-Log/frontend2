@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './inbodyOcr.css';
+import './InbodyOcr.css';
 
 function InBody() {
     const [data, setData] = useState({
@@ -18,6 +18,7 @@ function InBody() {
     });
     const [image, setImage] = useState(null);
     const [isSaved, setIsSaved] = useState(false);
+    const [aiAdvice, setAiAdvice] = useState('');
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
@@ -98,6 +99,38 @@ function InBody() {
         }));
     };
 
+    const fetchAIAdvice = async () => {
+        // 만약 InBody 엔티티의 UUID가 이미 저장되어 있다면, 그것을 사용합니다.
+        // 예시에서는 data.inbodyUuid를 사용하고 있습니다.
+        const uuid = data.inbodyUuid;
+    
+        // 서버로 보낼 요청 본문입니다.
+        const requestBody = { inbodyUuid: uuid };
+    
+        try {
+            // 서버에 POST 요청을 보냅니다.
+            const response = await fetch('http://localhost:8080/api/v1/gpt/inbody-feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const adviceData = await response.json();
+            // 서버로부터 받은 피드백을 컴포넌트 상태에 저장합니다.
+            setAiAdvice(adviceData.content); // 'content' 필드가 AI 조언을 담고 있습니다.
+        } catch (error) {
+            console.error('Error fetching AI advice:', error);
+            alert('AI advice could not be retrieved.');
+        }
+    };
+    
+
     return (
         <div className="inbody-container">
             <div className="image-upload-section">
@@ -111,61 +144,61 @@ function InBody() {
                 />
                 <button onClick={handleImageUpload}>Upload and Analyze</button>
             </div>
-
+    
             <div className="analysis-section">
-    <h2>Muscle-Fat Analysis</h2>
-    <div className="bar-container">
-        <div className="bar-label">체중</div>
-        <div className="bar">
-            <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}> {/* 수정됨 */}
-                <span className="bar-text">체중</span>
+                <h2>Muscle-Fat Analysis</h2>
+                <div className="bar-container">
+                    <div className="bar-label">체중</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}>
+                            <span className="bar-text">체중</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyWeight)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">골격근량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.muscleMass}%` }}>
+                            <span className="bar-text">골격근량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.muscleMass)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">체지방량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}>
+                            <span className="bar-text">체지방량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyFatMass)}</div>
+                </div>
             </div>
-        </div>
-        <div className="bar-value">{formatNumber(data.bodyWeight)}</div> {/* 수정됨 */}
-    </div>
-    <div className="bar-container">
-        <div className="bar-label">골격근량</div>
-        <div className="bar">
-            <div className="bar-fill" style={{ width: `${data.muscleMass}%` }}> {/* 수정됨 */}
-                <span className="bar-text">골격근량</span>
+    
+            <div className="analysis-section">
+                <h2>Obesity Analysis</h2>
+                <div className="bar-container">
+                    <div className="bar-label">BMI</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bmi}%` }}>
+                            <span className="bar-text">BMI</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bmi)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">체지방률</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}>
+                            <span className="bar-text">체지방률</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
+                </div>
             </div>
-        </div>
-        <div className="bar-value">{formatNumber(data.muscleMass)}</div> {/* 수정됨 */}
-    </div>
-    <div className="bar-container">
-        <div className="bar-label">체지방량</div>
-        <div className="bar">
-            <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}> {/* 수정됨 */}
-                <span className="bar-text">체지방량</span>
-            </div>
-        </div>
-        <div className="bar-value">{formatNumber(data.bodyFatMass)}</div> {/* 수정됨 */}
-    </div>
-</div>
-
-<div className="analysis-section">
-    <h2>Obesity Analysis</h2>
-    <div className="bar-container">
-        <div className="bar-label">BMI</div>
-        <div className="bar">
-            <div className="bar-fill" style={{ width: `${data.bmi}%` }}> {/* 수정됨 */}
-                <span className="bar-text">BMI</span>
-            </div>
-        </div>
-        <div className="bar-value">{formatNumber(data.bmi)}</div> {/* 수정됨 */}
-    </div>
-    <div className="bar-container">
-        <div className="bar-label">체지방률</div>
-        <div className="bar">
-            <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}> {/* 수정됨 */}
-                <span className="bar-text">체지방률</span>
-            </div>
-        </div>
-        <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div> {/* 수정됨 */}
-    </div>
-</div>
-
-      <div className="input-section">
+    
+            <div className="input-section">
                 <input
                     type="number"
                     name="bodyWeight"
@@ -200,27 +233,23 @@ function InBody() {
                     placeholder="Body Fat Percentage"
                     value={data.bodyFatPercentage}
                     onChange={handleChange}
-                    />
-                    <button onClick={handleSave}>Save</button>
-                </div>
+                />
+                <button onClick={handleSave}>Save</button>
+            </div>
     
-                {/* {isSaved && (
-                <div className="saved-data-section">
-                    <h3>Saved Data</h3>
-                    <p>Member UUID: {data.memberUuid}</p>
-                    <p>Body Weight: {formatNumber(data.bodyWeight)}</p>
-                    <p>Height: {data.height}</p>
-                    <p>Muscle Mass: {formatNumber(data.muscleMass)}</p>
-                    <p>Body Fat Mass: {formatNumber(data.bodyFatMass)}</p>
-                    <p>BMI: {formatNumber(data.bmi)}</p>
-                    <p>Body Fat Percentage: {formatNumber(data.bodyFatPercentage)}</p>
-                    <p>Basal Metabolic Rate: {data.basalMetabolicRate}</p>
-                    <p>Fat Free Mass: {data.fatFreeMass}</p>
-                    <p>Created At: {data.createdAt}</p>
-                    <p>Updated At: {data.updatedAt}</p>
-                </div>
-            )} */}
             {isSaved && <div>Data saved successfully!</div>}
+    
+            <div className="ai-advice-section">
+                <div className="ai-advice-header">
+                    <h2>AI ADVISE</h2>
+                    <button onClick={fetchAIAdvice} className="generate-advice-btn">생성</button>
+                </div>
+                <textarea 
+                    value={aiAdvice}
+                    readOnly={true}
+                    className="ai-advice-textarea"
+                ></textarea>
+            </div>
         </div>
     );
 }
