@@ -17,6 +17,7 @@ export default function Login(){
   
   const handleLogin = () => {
     axios.post("http://localhost:8080/api/v1/members/login", {
+      //호스트 요청
       loginId: id,
       password: password
     })
