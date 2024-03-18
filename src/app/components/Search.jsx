@@ -146,32 +146,43 @@ function Search() {
 
   useEffect(() => {
     // 이미 초기화가 완료되었으면 아무것도 하지 않음
-    if (isInitialized) return;
+    const initialized = localStorage.getItem('isInitialized');
+    if (initialized === 'true') {
+      console.log("이미 초기화 완료됨");
+      setIsInitialized(true);
+      return;
+    }
   
     const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
     const mealDate = new Date().toISOString().split('T')[0];
-    const memberUuid = userUuid;
   
-    mealTypes.forEach(async (mealType) => {
-      try {
-        const postData = {
-          memberUuid,
-          mealType,
-          mealDate
-        };
-  
-        const response = await axios.post("http://localhost:8080/api/v1/diet/register", postData);
-        const dietUuid = response.data.dietUuid;
-        setDietUuids(prevUuids => ({ ...prevUuids, [mealType]: dietUuid }));
-        console.log(`식사 유형 ${mealType}에 대한 dietUuid: `, dietUuid);
-  
-        // 성공적으로 초기화가 완료되면, 초기화 상태를 true로 설정하여 다음 렌더링 때 API 호출을 방지
-        setIsInitialized(true);
-      } catch (error) {
-        console.error(`식사 유형 ${mealType} 초기화 실패: `, error);
+    // 모든 식사 유형에 대한 초기화 함수를 순차적으로 실행
+    (async () => {
+      for (const mealType of mealTypes) {
+        try {
+          const postData = {
+            memberUuid: userUuid,
+            mealType,
+            mealDate
+          };
+          const response = await axios.post("http://localhost:8080/api/v1/diet/register", postData);
+          const dietUuid = response.data.dietUuid;
+          setDietUuids(prevUuids => ({ ...prevUuids, [mealType]: dietUuid }));
+          console.log(`식사 유형 ${mealType}에 대한 dietUuid: `, dietUuid);
+          localStorage.setItem(`${mealType}Uuid`, dietUuid);
+        } catch (error) {
+          console.error(`식사 유형 ${mealType} 초기화 실패: `, error);
+          break; // 에러 발생 시 초기화 중단
+        }
       }
-    });
-  }, [isInitialized, userUuid, setDietUuids]); // 의존성 배열에 isInitialized를 추가
+      setIsInitialized(true); // 모든 요청이 성공적으로 완료되었음을 의미
+      localStorage.setItem('isInitialized', 'true');
+    })();
+  
+    // 의존성 배열에 isInitialized를 포함시켜서, isInitialized 값이 변경될 때만 이 useEffect를 다시 실행
+  }, []);
+  
+  
 /* 미사용 코드
   const initializeDiet = async (mealType) => {
     try {
