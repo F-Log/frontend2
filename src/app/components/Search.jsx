@@ -52,9 +52,9 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           max="5.0"
           step="0.1"
           value={foodData.multiplier}
-          onChange={(e) => handleChange('multiplier', e.target.value)}
+          onChange={(e) => handleChange('multiplier', parseFloat(e.target.value))}
         />
-        {foodData.amount * foodData.multiplier} g
+        {(foodData.amount * foodData.multiplier).toFixed(2)} g
       </label>
       <label>
         에너지 (kcal):
@@ -103,6 +103,7 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
 
 function Search() {
   const userUuid = localStorage.getItem("userUuid");
+  const [isInitialized, setIsInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [relatedSearches, setRelatedSearches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -144,11 +145,13 @@ function Search() {
   });
 
   useEffect(() => {
+    // 이미 초기화가 완료되었으면 아무것도 하지 않음
+    if (isInitialized) return;
+  
     const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
-    const mealDate = new Date().toISOString().split('T')[0]; // 현재 날짜를 YYYY-MM-DD 형식으로 가져옴
-    const memberUuid = userUuid; // 사용자 UUID
-
-    // 각 식사 유형에 대한 초기화 요청을 보내고 dietUuid를 로그로 출력
+    const mealDate = new Date().toISOString().split('T')[0];
+    const memberUuid = userUuid;
+  
     mealTypes.forEach(async (mealType) => {
       try {
         const postData = {
@@ -156,16 +159,19 @@ function Search() {
           mealType,
           mealDate
         };
-        
+  
         const response = await axios.post("http://localhost:8080/api/v1/diet/register", postData);
         const dietUuid = response.data.dietUuid;
-        setDietUuids((prevUuids) => ({ ...prevUuids, [mealType]: dietUuid }));
+        setDietUuids(prevUuids => ({ ...prevUuids, [mealType]: dietUuid }));
         console.log(`식사 유형 ${mealType}에 대한 dietUuid: `, dietUuid);
+  
+        // 성공적으로 초기화가 완료되면, 초기화 상태를 true로 설정하여 다음 렌더링 때 API 호출을 방지
+        setIsInitialized(true);
       } catch (error) {
         console.error(`식사 유형 ${mealType} 초기화 실패: `, error);
       }
     });
-  }, []);
+  }, [isInitialized, userUuid, setDietUuids]); // 의존성 배열에 isInitialized를 추가
 /* 미사용 코드
   const initializeDiet = async (mealType) => {
     try {
@@ -267,7 +273,7 @@ function Search() {
           memberUuid: userUuid,
           foodUuid: foodUuid,
           dietUuid: dietUuid,
-          quantity: updatedFoodData.amount,
+          quantity: updatedFoodData.multiplier,
           notes: ""
         });
         console.log('Food logged:', response.data);
@@ -310,7 +316,7 @@ function Search() {
           memberUuid: userUuid,
           foodUuid: foodUuid,
           dietUuid: dietUuid,
-          quantity: updatedFoodData.amount,
+          quantity: updatedFoodData.multiplier,
           notes: ""
         });
         console.log('Food logged:', response.data);
@@ -376,7 +382,7 @@ function Search() {
       const dietResponse = await axios.post("http://localhost:8080/api/v1/dietfoods/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
         foodUuid: foodUuid,
         dietUuid: dietUuid,
-        quantity: newUpdatedFoodData.amount,
+        quantity: newUpdatedFoodData.multiplier,
         notes: ""
       });
       console.log('Food logged:', dietResponse.data);
@@ -589,7 +595,9 @@ function Search() {
             <h2>연관 검색어</h2>
             <div className="related-searches-scrollable">
               {relatedSearches.map((search) => (
-                <div key={search.foodUuid} className="related-search-item">
+                <div key={search.foodUuid}
+                onClick={() => handleSelectRelatedSearch(search.foodUuid)}
+                className="related-search-item">
                   {search.foodName}
                   {/* 사용자가 지정한 검색어일 경우에만 삭제 버튼을 렌더링 */}
                   {search.isUserDefined && (
