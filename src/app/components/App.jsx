@@ -18,7 +18,7 @@ import Login from './login';
 import Mypage from './mypage';
 import Register from './register';
 import UpdatePass from './updatepass';
-import InbodyOcr from './inbodyOcr';
+import InbodyOcr from './InbodyOcr';
 
 
 function App() {
@@ -36,13 +36,13 @@ function App() {
           <Route path="/ocr" element={<OCR />} />
           <Route path="/search" element={<Search />} />
           <Route path="/calender" element={<Calender />} />
-          <Route path="/inbody" element={<InBody />} />
+          <Route path="/InbodyOcr" element={<InbodyOcr />} />
           <Route path="/log" element={<Log />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/changepw" element={<ChangePw />} />
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/update-password" element={<UpdatePass />} /> 
-          <Route path="/InbodyOcr" element={<InbodyOcr />} />
+          <Route path="/inbody" element={<InBody />} />
         </Routes>
         </section>
       </div>
