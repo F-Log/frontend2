@@ -353,7 +353,7 @@ input[type="range"] {
 }
 
 .related-searches-scrollable {
-  max-height: 150px; /* Adjust the height to your preference */
+  max-height: 450px; /* Adjust the height to your preference */
   overflow: auto;
   display: flex;
   flex-direction: column;
