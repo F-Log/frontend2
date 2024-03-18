@@ -7,8 +7,8 @@ import InBody from './InBody';
 import Calender from './Calender';
 import Log from './Log';
 import Setting from './Setting';
-import AuthButtons from './AuthButtons'; // AuthButtons 컴포넌트를 임포트합니다.
-import NavigationButtons from './NavigationButtons';
+//import AuthButtons from './AuthButtons'; // AuthButtons 컴포넌트를 임포트합니다.
+//import NavigationButtons from './NavigationButtons';
 import ChangePw from './ChangePw';
 import DeleteAccount from './DeleteAccount';
 import { FoodProvider } from './FoodContext';
@@ -18,6 +18,8 @@ import Login from './login';
 import Mypage from './mypage';
 import Register from './register';
 import UpdatePass from './updatepass';
+import InbodyOcr from './inbodyOcr';
+
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
           <Route path="/changepw" element={<ChangePw />} />
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/update-password" element={<UpdatePass />} /> 
+          <Route path="/InbodyOcr" element={<InbodyOcr />} />
         </Routes>
         </section>
       </div>

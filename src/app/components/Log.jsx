@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Log.css'; 
+import axios from "axios";
 
 const NutritionBar = ({ label, percentage }) => {
   const barBackground = percentage > 100 ? 'red' : 'grey';
@@ -24,12 +25,27 @@ const NutritionBar = ({ label, percentage }) => {
 
 const LogPage = () => {
   const [advice, setAdvice] = useState('');
+  const userUuid = localStorage.getItem("userUuid");
   const [recommendations, setRecommendations] = useState([]);
-
+  const mealDate = new Date().toISOString().split('T')[0];
+  const [dailyFeedback, setDailyFeedback] = useState({});
   
 
-  const handleGenerateAdvice = (type) => {
-    setAdvice(type === 'today' ? '오늘의 피드백입니다.' : '일주일의 피드백입니다.');
+  const handleGenerateAdvice = async (type) => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
+        memberUuid: userUuid,
+        date: mealDate
+      });
+      console.log('Food feedback:', response.data);
+      setDailyFeedback(response.data.content);
+      setAdvice(type === 'today' ? response.data.content : '일주일의 피드백입니다.');
+    } catch (error) {
+      console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
+    }
+    setAdvice(type === 'today' ? 
+    dailyFeedback : 
+    '일주일의 피드백입니다.');
   };
 
   const handleGenerateRecommendations = () => {

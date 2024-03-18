@@ -26,16 +26,13 @@ function Header() {
             )}
           </div>
           <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/log')}>LOG</a>
-          <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/inbody')}>InBody</a>
+          <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/inbodyOcr')}>InBody</a>
           <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/calender')}>CALENDAR</a>
         </nav>
         <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => navigate('/')}>Log out</button>
         <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5" onClick={() => navigate('/setting')}>Setting</button>
       </div>
-      {/* 디버깅용
-      <div>
-        ${userUuid}
-            </div>*/}
+      
     </header>
   );
 }
