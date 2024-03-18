@@ -41,7 +41,10 @@
   }
   
   .advice-section {
-    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
   }
   
   .advice-text {
@@ -49,4 +52,100 @@
     padding: 10px;
     margin-top: 10px;
   }
+  .advice-section {
+    background-color: #f0f7ff; /* Light blue background */
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items vertically */
+    max-width: 600px; /* Set a max width */
+    margin: 20px auto; /* Center the section horizontally with margin */
+  }
+
+  .advice-section button {
+    /* Styles for your buttons */
+    background-color: #88d1f9;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    margin-right: 10px; /* Adjust spacing between buttons */
+  }
+  
+  .advice-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Stretch across the full width of the parent */
+    margin-bottom: 10px; /* Add some space below the buttons */
+  }
+  .advice-buttons button:first-child {
+    margin-left: auto; /* Pushes the first button to the right */
+  }
+  .advice-button {
+    background-color: #88d1f9; /* Blue background */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .advice-button:not(:last-child) {
+    margin-right: 10px; /* Space between buttons */
+  }
+
+  h3.ai-advice {
+    font-weight: 800; /* or 900 */
+  }
+  .advice-text {
+    /* Styles for the advice text box */
+    background-color: #ced6ff;
+    padding: 20px;
+    border-radius: 10px;
+    flex-grow: 1; /* Allows the text box to fill the space */
+    margin-right: 10px; /* Adjust spacing between text box and buttons */
+  }
+  
+  .recommendations-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .recommendation-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Adjust the space between images */
+  }
+  
+  
+  .recommendation-item {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .recommendation-item img {
+    width: 100px; /* Set image size */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Make it round */
+    margin-bottom: 5px; /* Space below the image */
+  }
+  
+  /* Responsive adjustments might be necessary for smaller screens */
+  @media (max-width: 768px) {
+    .advice-buttons {
+      flex-direction: column;
+    }
+  
+    .advice-button {
+      width: 100%; /* Full width on smaller screens */
+      margin-bottom: 10px;
+    }
+  }
+  
+  
+
   
