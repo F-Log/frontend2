@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Log.css'; 
 import axios from "axios";
 
@@ -29,6 +29,11 @@ const LogPage = () => {
   const [recommendations, setRecommendations] = useState([]);
   const mealDate = new Date().toISOString().split('T')[0];
   const [dailyFeedback, setDailyFeedback] = useState({});
+  const [energy, setEnergy] = useState(0);
+  const [carbs, setCarbs] = useState(0);
+  const [protein, setProtein] = useState(0);
+  const [fat, setFat] = useState(0);
+  const [maxEntry, setMaxEntry] = useState(500);
 
   const fetchAdvice = async () => {
     try {
@@ -43,6 +48,27 @@ const LogPage = () => {
       setAdvice('피드백을 받아오는데 실패했습니다.');
     }
   };
+  const fetchEnergys = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/v1/diet/daily-intake", {
+        params: {
+          memberUuid: userUuid,
+          date: mealDate,
+        }
+      });
+      console.log('Food daily-intake:', response.data);
+      setEnergy(response.data.totalCalories);
+      setCarbs(response.data.totalCarbohydrate);
+      setProtein(response.data.totalProtein);
+      setFat(response.data.totalFat);
+    } catch (error) {
+      console.error('Error fetching daily intake:', error.response ? error.response.data : error.message);
+      // It's better to handle error setting here too if needed
+    }
+  };
+  useEffect(() => {
+    fetchEnergys();
+  }, []);
 
 
   const handleGenerateAdvice = async (type) => {
@@ -80,14 +106,14 @@ const LogPage = () => {
       <h1>오늘의 결과를 확인하세요!</h1>
       <div className="nutrition-bars">
         {/* 가짜 데이터 */}
-        <div>에너지</div>
-        <NutritionBar label="|" percentage={175} />
-        <div>탄수화물</div>
-        <NutritionBar label="|" percentage={240} />
-        <div>단백질</div>
-        <NutritionBar label="|" percentage={110} />
-        <div>지방</div>
-        <NutritionBar label="|" percentage={75} />
+        <div>에너지 {energy} / {maxEntry}</div>
+        <NutritionBar label="|" percentage={energy / maxEntry * 100} />
+        <div>탄수화물 {carbs} / {maxEntry}</div>
+        <NutritionBar label="|" percentage={carbs / maxEntry * 100} />
+        <div>단백질 {protein} / {maxEntry}</div>
+        <NutritionBar label="|" percentage={protein / maxEntry * 100} />
+        <div>지방 {fat} / {maxEntry}</div>
+        <NutritionBar label="|" percentage={fat / maxEntry * 100} />
       </div>
       <div className="advice-section">
         <div className="advice-header">
