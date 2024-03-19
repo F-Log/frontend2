@@ -146,111 +146,43 @@ function Search() {
   useEffect(() => {
     const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
     const mealDate = new Date().toISOString().split('T')[0];
-    
+    const userUuid = localStorage.getItem("userUuid"); // Make sure you have the userUuid
+  
     const checkAndInitializeMealTypes = async () => {
-      // Check which mealTypes are initialized
-      const checks = mealTypes.map(async (mealType) => {
+      for (const mealType of mealTypes) {
         try {
-          // Try to get existing data
           const existingUuid = localStorage.getItem(`${mealType}Uuid`);
           const response = await axios.get(`http://localhost:8080/api/v1/diet/${existingUuid}`);
-          return { mealType, isInitialized: true, uuid: response.data.dietUuid };
+  
+          if (response.data && response.data.memberUuid !== userUuid) {
+            throw new Error('UUID does not match');
+          }
+          
+          console.log(`${mealType} is already initialized with UUID: ${response.data.dietUuid}`);
         } catch (error) {
-          // If error, assume it needs initialization
-          return { mealType, isInitialized: false };
-        }
-      });
-
-      // Wait for all checks to complete
-      const results = await Promise.all(checks);
-
-      // Initialize missing meal types
-      for (const result of results) {
-        if (!result.isInitialized) {
+          // If there is a mismatch, or it's not initialized, create a new entry
           try {
             const response = await axios.post(`http://localhost:8080/api/v1/diet/register`, {
               memberUuid: userUuid,
-              mealType: result.mealType,
-              mealDate: mealDate
+              mealType,
+              mealDate
             });
-            // Handle success, possibly update state or localStorage with new UUID
-            console.log(`${result.mealType} initialized with UUID: ${response.data.dietUuid}`);
+            
             const dietUuid = response.data.dietUuid;
-          // localStorage와 상태 업데이트
-            localStorage.setItem(`${result.mealType}Uuid`, dietUuid);
-            console.log(`식사 유형 ${result.mealType}에 대한 dietUuid: `, dietUuid);
-          } catch (error) {
-            // Handle error
-            console.error(`Failed to initialize ${result.mealType}: `, error);
+            localStorage.setItem(`${mealType}Uuid`, dietUuid);
+            console.log(`${mealType} initialized with UUID: ${dietUuid}`);
+          } catch (postError) {
+            console.error(`Failed to initialize ${mealType}: `, postError);
           }
         }
       }
     };
-
-    // Run the check and initialize function
+  
     checkAndInitializeMealTypes();
   }, []);
+  
 
-/*
-  useEffect(() => {
-    const checkAndInitializeMealTypes = async () => {
-      const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
-      const mealDate = new Date().toISOString().split('T')[0];
-      //console.log(`useEffect: mealDate: `, mealDate);
-      for (const mealType of mealTypes) {
-        //const existingUuid = localStorage.getItem(`${mealType}Uuid`);
-        //console.log(`현존한 식사 유형 ${mealType}에 대한 dietUuid: `, existingUuid);
-        // 서버에 UUID가 존재하는지 확인
-        /*if (existingUuid) {
-          try {
-            console.log(`현존한 식사 유형 ${mealType}에 대한 dietUuid: `, existingUuid);
-            const response = await axios.get(`http://localhost:8080/api/v1/diet/${existingUuid}`);
-            // UUID가 유효한 경우에는 로컬 저장소와 상태를 업데이트하지 않고 계속 진행
-            if (response.status === 200) {
-              continue;
-            }
-          } catch (error) {
-            // 서버에 UUID가 존재하지 않는 경우 (예: 404 오류), 로컬 저장소에서 UUID 제거
-            localStorage.removeItem(`${mealType}Uuid`);
-          }
-        }
-        */
-        // 새로운 UUID를 등록
-        /*
-        try {
-          const postData = {
-            memberUuid: userUuid,
-            mealType,
-            mealDate
-          };
-          const response = await axios.post("http://localhost:8080/api/v1/diet/register", postData);
-          const dietUuid = response.data.dietUuid;
-          // localStorage와 상태 업데이트
-          localStorage.setItem(`${mealType}Uuid`, dietUuid);
-          console.log(`식사 유형 ${mealType}에 대한 dietUuid: `, dietUuid);
-        } catch (error) {
-          console.error(`식사 유형 ${mealType} 초기화 실패: `, error);
-          break; // 에러 발생 시 초기화 중단
-        }
-      }
-      
-      // 상태에 UUID들을 저장
-      setDietUuids(mealTypes.reduce((acc, mealType) => {
-        acc[mealType] = localStorage.getItem(`${mealType}Uuid`);
-        return acc;
-      }, {}));
-  
-      // 초기화 완료 플래그 설정
-      setIsInitialized(true);
-    };
-    const isAlreadyInitialized = localStorage.getItem('isInitialized');
-    // 이미 초기화가 완료된 상태가 아니라면 체크 및 초기화 프로세스 시작
-    if (!isAlreadyInitialized) {
-      checkAndInitializeMealTypes();
-    }
-  }, [userUuid]);
-  
-  */
+
 /* 미사용 코드
   const initializeDiet = async (mealType) => {
     try {
