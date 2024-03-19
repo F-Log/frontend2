@@ -93,17 +93,30 @@
   /* Ensure that buttons do not wrap and are displayed inline */
   .settings .button-group {
     white-space: nowrap; /* Prevents wrapping of buttons */
+    display: flex; /* Use flexbox to lay out children */
+    justify-content: flex-start; /* Align children to the start of the container */
+    gap: 10px;
   }
   
   /* Ensure that the save and cancel buttons are not inheriting unwanted styles */
-  .settings .save-btn,
-  .settings .cancel-btn {
+  .settings .save-btn {
     background-color: #27a9e0 !important; /* Blue color */
     color: white !important;
     border: none !important;
+    padding: 10px 20px;
+  }
+
+  .settings .cancel-btn {
+    background-color: #88dbff !important; /* Blue color */
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px;
   }
   
-  .settings .save-btn:hover,
+  .settings .save-btn:hover {
+    background-color: #1a87c5 !important; /* Darker blue on hover */
+  }
+
   .settings .cancel-btn:hover {
     background-color: #1a87c5 !important; /* Darker blue on hover */
   }
@@ -117,6 +130,7 @@
   /* Adjust the link to change password to look clickable */
   .settings .change-pw-link {
     color: #27a9e0;
+    background-color: white !important;
     text-decoration: underline;
     cursor: pointer;
   }

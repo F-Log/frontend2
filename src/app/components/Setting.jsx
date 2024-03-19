@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-//import './Setting.css';
+import './Setting.css';
 
 function Setting() {
   const navigate = useNavigate();
@@ -58,6 +58,7 @@ const saveSettings = async () => {
     // First, try to update the existing settings.
     const putResponse = await axios.put(`http://localhost:8080/api/v1/exercises/${userUuid}`, settingsData);
     console.log('Settings updated:', putResponse.data);
+    alert("설정이 업데이트되었습니다!");
     //navigate('/'); // Redirect to the home page upon successful update.
   } catch (putError) {
     // If the update fails, check if it's because the data doesn't exist.
@@ -66,13 +67,16 @@ const saveSettings = async () => {
         // If the data doesn't exist, try to create new settings.
         const postResponse = await axios.post(`http://localhost:8080/api/v1/exercises/${userUuid}`, settingsData);
         console.log('Settings saved:', postResponse.data);
+        alert("설정이 저장되었습니다!");
         //navigate('/'); // Redirect to the home page upon successful save.
       } catch (postError) {
         console.error('Failed to save new settings:', postError.response ? postError.response.data : postError);
+        alert("저장 실패: " + (postError.response?.data?.message || "서버 오류"));
       }
     } else {
       // If the update fails for another reason, log the error.
       console.error('Failed to update settings:', putError.response ? putError.response.data : putError);
+      alert("업데이트 실패: " + (putError.response?.data?.message || "서버 오류"));
     }
   }
 };
@@ -176,9 +180,10 @@ const saveSettings = async () => {
       </div>*/}
           
       {/* 저장 및 취소 버튼 */}
-      <button onClick={saveSettings} className='save-btn selected inline-flex items-center bg-[#8801f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>저장</button>
-      <button onClick={() => navigate('/home')} className='cancel-btn selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>취소</button>
-
+      <div className="button-group">
+        <button onClick={saveSettings} className='save-btn selected inline-flex items-center bg-[#8801f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>저장</button>
+        <button onClick={() => navigate('/home')} className='cancel-btn selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>취소</button>
+      </div>
       {/* 비밀번호 변경 링크 */}
       <div onClick={() => navigate('/changepw')} className='change-pw-link'>비밀번호를 변경하시겠습니까?</div>
 
