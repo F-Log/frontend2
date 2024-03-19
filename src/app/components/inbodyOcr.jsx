@@ -70,6 +70,46 @@ function InBody() {
         }));
     };
 
+    const handleSaveChanges = async () => {
+        if (!data.inbodyUuid) {
+            alert('No InBody data to update.');
+            return;
+        }
+    
+        const updateData = {
+            memberUuid: data.memberUuid,
+            bodyWeight: data.bodyWeight,
+            height: data.height,
+            muscleMass: data.muscleMass,
+            bodyFatMass: data.bodyFatMass,
+            fatFreeMass: data.fatFreeMass,
+            bodyFatPercentage: data.bodyFatPercentage,
+            basalMetabolicRate: data.basalMetabolicRate,
+        };
+    
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/inbody/${data.inbodyUuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const updatedData = await response.json();
+            setData({ ...data, ...updatedData }); // Update the state with the new data
+            alert('변경사항이 저장되었습니다.'); // Alert the user that the changes have been saved
+        } catch (error) {
+            console.error('Error:', error);
+            alert('변경사항을 저장하는 중 오류가 발생했습니다.');
+        }
+    };
+    
+
     const fetchAIAdvice = async () => {
         if (!data.inbodyUuid) {
             alert('No InBody data to analyze.');
@@ -184,7 +224,9 @@ function InBody() {
                     <div className="bar-value">{formatNumber(data.basalMetabolicRate)}</div>
                 </div>
             </div>
-    
+            <div className="analysis-message-section">
+                <h2>올바르지 않은 분석 결과는 수기로 수정해주세요.</h2>
+            </div>
             <div className="input-section">
                 <div className="input-group">
                     <label htmlFor="height">키</label>
@@ -265,7 +307,13 @@ function InBody() {
                 </div>
             </div>
     
-            {isSaved && <div>인바디 정보가 저장됐습니다.</div>}
+            {isSaved && (
+    <div>
+        <span>인바디 정보가 저장됐습니다.</span>
+        <button onClick={handleSaveChanges} className="save-changes-btn">변경사항 저장</button>
+    </div>
+)}
+
     
             <div className="ai-advice-section">
                 <div className="ai-advice-header">

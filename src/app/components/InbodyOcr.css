@@ -199,4 +199,23 @@ opacity: 0.8; /* 마우스 오버 시 투명도 조정 */
 }
 }
 
+.analysis-message-section {
+  text-align: center; /* Centers the text */
+  margin-top: 20px; /* Adds some space above the message */
+  margin-bottom: 20px; /* Adds some space below the message */
+  color: #333; /* Sets the text color */
+}
 
+.save-changes-btn {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding inside the button */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  margin-left: 10px; /* Space from the preceding text */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.save-changes-btn:hover {
+  background-color: #45a049; /* Darker shade of green on hover */
+}
