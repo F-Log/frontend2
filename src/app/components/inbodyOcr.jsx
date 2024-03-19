@@ -186,56 +186,83 @@ function InBody() {
             </div>
     
             <div className="input-section">
-                <input
-                    type="number"
-                    name="height"
-                    placeholder="Height"
-                    value={data.height}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="bodyWeight"
-                    placeholder="Weight"
-                    value={data.bodyWeight}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="muscleMass"
-                    placeholder="Muscle Mass"
-                    value={data.muscleMass}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="bodyFatMass"
-                    placeholder="Body Fat Mass"
-                    value={data.bodyFatMass}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="fatFreeMass"
-                    placeholder="Fat Free Mass"
-                    value={data.fatFreeMass}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="bodyFatPercentage"
-                    placeholder="Body Fat Percentage"
-                    value={data.bodyFatPercentage}
-                    onChange={handleChange}
-                />
-                <input
-                    type="number"
-                    name="basalMetabolicRate"
-                    placeholder="Basal Metabolic Rate"
-                    value={data.basalMetabolicRate}
-                    onChange={handleChange}
-                />
-                
+                <div className="input-group">
+                    <label htmlFor="height">키</label>
+                    <input
+                        type="number"
+                        name="height"
+                        id="height"
+                        placeholder="Height"
+                        value={data.height}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="bodyWeight">체중</label>
+                    <input
+                        type="number"
+                        name="bodyWeight"
+                        id="bodyWeight"
+                        placeholder="Weight"
+                        value={data.bodyWeight}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="muscleMass">골격근량</label>
+                    <input
+                        type="number"
+                        name="muscleMass"
+                        id="muscleMass"
+                        placeholder="Muscle Mass"
+                        value={data.muscleMass}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="bodyFatMass">체지방량</label>
+                    <input
+                        type="number"
+                        name="bodyFatMass"
+                        id="bodyFatMass"
+                        placeholder="Body Fat Mass"
+                        value={data.bodyFatMass}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="fatFreeMass">제지방량</label>
+                    <input
+                        type="number"
+                        name="fatFreeMass"
+                        id="fatFreeMass"
+                        placeholder="Fat Free Mass"
+                        value={data.fatFreeMass}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="bodyFatPercentage">체지방률</label>
+                    <input
+                        type="number"
+                        name="bodyFatPercentage"
+                        id="bodyFatPercentage"
+                        placeholder="Body Fat Percentage"
+                        value={data.bodyFatPercentage}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="basalMetabolicRate">체지방률</label>
+                    <input
+                        type="number"
+                        name="basalMetabolicRate"
+                        id="basalMetabolicRate"
+                        placeholder="Basal Metabolic Rate"
+                        value={data.basalMetabolicRate}
+                        onChange={handleChange}
+                    />
+                </div>
             </div>
     
             {isSaved && <div>인바디 정보가 저장됐습니다.</div>}
