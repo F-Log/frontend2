@@ -1,0 +1,128 @@
+/* Add these styles to overwrite the existing ones where necessary */
+.settings {
+    text-align: left;
+    padding-left: 0; /* Removes padding to align items to the left */
+  }
+  
+  .settings > div {
+    display: block; /* Ensures all divs are block-level elements */
+  }
+  
+  .settings > div:not(.button-group) {
+    font-size: larger; /* Increases the font size of div elements */
+    font-weight: bold; /* Makes the text bold */
+  }
+  
+  .settings input[type='text'],
+  .settings input[type='number'] {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    /* Ensure full width minus the padding and border */
+    width: calc(100% - 2rem); 
+  }
+  
+  .settings button,
+  .settings .save-btn,
+  .settings .cancel-btn {
+    width: 200px; /* Fixed width */
+    background-color: #88d1f9;
+    color: #fff;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin: 0.25rem 0.25rem 0.25rem 0; /* Adjusted margins */
+    text-align: center; /* Center the text inside buttons */
+  }
+  
+  .settings button:not(.selected) {
+    background-color: #fff;
+    color: #88d1f9;
+  }
+  
+  .settings .selected {
+    background-color: #88d1f9;
+    color: #fff;
+  }
+  
+  .settings .cancel-btn {
+    background-color: #fff;
+    color: #88d1f9;
+    border: 1px solid #88d1f9;
+  }
+  
+  .settings .change-pw-link {
+    color: #88d1f9;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .settings .delete-account-button {
+    background-color: red;
+    color: #fff;
+    width: auto; /* Adjust width according to content */
+    padding: 0.5rem 1rem;
+  }
+  
+  /* To ensure specificity over other styles, you can add the !important keyword if necessary */
+  .settings button.save-btn,
+  .settings button.cancel-btn {
+    font-weight: bold;
+    width: auto !important; /* Allows button to resize based on content */
+    padding: 0.5rem 1rem !important;
+  }
+  
+  .settings .delete-account-button,
+  .settings .mypage-button {
+    background-color: red !important;
+    color: white !important;
+  }
+  
+  .settings .change-pw-link,
+  .settings .delete-account-button:hover,
+  .settings .mypage-button:hover {
+    background-color: #f44336 !important; /* Slightly lighter red for hover state */
+  }
+  
+  /* Update the .app class for potential overflow issues */
+  .app {
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  
+  /* Ensure that buttons do not wrap and are displayed inline */
+  .settings .button-group {
+    white-space: nowrap; /* Prevents wrapping of buttons */
+  }
+  
+  /* Ensure that the save and cancel buttons are not inheriting unwanted styles */
+  .settings .save-btn,
+  .settings .cancel-btn {
+    background-color: #27a9e0 !important; /* Blue color */
+    color: white !important;
+    border: none !important;
+  }
+  
+  .settings .save-btn:hover,
+  .settings .cancel-btn:hover {
+    background-color: #1a87c5 !important; /* Darker blue on hover */
+  }
+  
+  /* Make sure the delete account button has the right styling */
+  .settings .delete-account-button {
+    background-color: red !important;
+    color: white !important;
+  }
+  
+  /* Adjust the link to change password to look clickable */
+  .settings .change-pw-link {
+    color: #27a9e0;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  /* Add hover effect to the link to change password */
+  .settings .change-pw-link:hover {
+    text-decoration: none; /* Removes underline on hover */
+  }
+  
