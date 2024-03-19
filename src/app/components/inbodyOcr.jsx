@@ -21,44 +21,15 @@ function InBody() {
     const [aiAdvice, setAiAdvice] = useState('');
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            alert("인바디 용지가 첨부됐습니다."); // 사용자에게 알림
+        }
     };
 
     const formatNumber = (number) => {
         return isNaN(number) ? "0.0" : number.toFixed(1);
-    };
-
-    const handleImageUpload = async () => {
-        if (!image) {
-            alert('Please select an image for OCR processing.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', image);
-
-        try {
-            const response = await fetch('/ocr-process', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const ocrData = await response.json();
-
-            setData(prevData => ({
-                ...prevData,
-                ...ocrData,
-                bmi: ocrData.bodyWeight / ((ocrData.height / 100) ** 2),
-            }));
-            
-        } catch (error) {
-            console.error('Error during OCR processing:', error);
-            alert('An error occurred during OCR processing.');
-        }
     };
 
     const handleSave = async () => {
@@ -84,7 +55,7 @@ function InBody() {
             const savedData = await response.json();
             setData({ ...data, ...savedData });
             setIsSaved(true);
-            alert('The data has been saved.');
+            alert('용지 분석 결과를 확인해주세요.');
         } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while saving the data.');
@@ -100,15 +71,15 @@ function InBody() {
     };
 
     const fetchAIAdvice = async () => {
-        // 만약 InBody 엔티티의 UUID가 이미 저장되어 있다면, 그것을 사용합니다.
-        // 예시에서는 data.inbodyUuid를 사용하고 있습니다.
+        if (!data.inbodyUuid) {
+            alert('No InBody data to analyze.');
+            return;
+        }
+
         const uuid = data.inbodyUuid;
-    
-        // 서버로 보낼 요청 본문입니다.
         const requestBody = { inbodyUuid: uuid };
     
         try {
-            // 서버에 POST 요청을 보냅니다.
             const response = await fetch('http://localhost:8080/api/v1/gpt/inbody-feedback', {
                 method: 'POST',
                 headers: {
@@ -122,19 +93,17 @@ function InBody() {
             }
     
             const adviceData = await response.json();
-            // 서버로부터 받은 피드백을 컴포넌트 상태에 저장합니다.
-            setAiAdvice(adviceData.content); // 'content' 필드가 AI 조언을 담고 있습니다.
+            setAiAdvice(adviceData.content);
         } catch (error) {
             console.error('Error fetching AI advice:', error);
             alert('AI advice could not be retrieved.');
         }
     };
-    
 
     return (
         <div className="inbody-container">
-            <div className="image-upload-section">
-                <label htmlFor="inbody-image-upload">Upload InBody Report</label>
+            <div className="buttons-section">
+                <label htmlFor="inbody-image-upload" className="upload-btn">인바디 용지 불러오기</label>
                 <input
                     id="inbody-image-upload"
                     type="file"
@@ -142,11 +111,11 @@ function InBody() {
                     onChange={handleImageChange}
                     style={{ display: 'none' }}
                 />
-                <button onClick={handleImageUpload}>Upload and Analyze</button>
+                <button onClick={handleSave} className="save-btn">분석 및 저장</button>
             </div>
     
             <div className="analysis-section">
-                <h2>Muscle-Fat Analysis</h2>
+                <h2>주요 신체 지표</h2>
                 <div className="bar-container">
                     <div className="bar-label">키</div>
                     <div className="bar">
@@ -186,7 +155,7 @@ function InBody() {
             </div>
     
             <div className="analysis-section">
-                <h2>Obesity Analysis</h2>
+                <h2>기타 분석 지표</h2>
                 <div className="bar-container">
                     <div className="bar-label">제지방량</div>
                     <div className="bar">
@@ -201,7 +170,7 @@ function InBody() {
                     <div className="bar">
                         <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}>
                             <span className="bar-text">체지방률</span>
-                        </div>
+                        </div>  
                     </div>
                     <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
                 </div>
@@ -267,10 +236,9 @@ function InBody() {
                     onChange={handleChange}
                 />
                 
-                <button onClick={handleSave}>Save</button>
             </div>
     
-            {isSaved && <div>Data saved successfully!</div>}
+            {isSaved && <div>인바디 정보가 저장됐습니다.</div>}
     
             <div className="ai-advice-section">
                 <div className="ai-advice-header">
