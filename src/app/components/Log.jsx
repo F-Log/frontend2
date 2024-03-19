@@ -34,6 +34,21 @@ const LogPage = () => {
   const [protein, setProtein] = useState(0);
   const [fat, setFat] = useState(0);
   const [maxEntry, setMaxEntry] = useState(500);
+  const [viewMode, setViewMode] = useState('diet');
+  const [data, setData] = useState({
+    inbodyUuid: '',
+    memberUuid: localStorage.getItem("userUuid") || '',
+    bodyWeight: 0,
+    height: 0,
+    muscleMass: 0,
+    bodyFatMass: 0,
+    bmi: 0,
+    bodyFatPercentage: 0,
+    basalMetabolicRate: 0,
+    fatFreeMass: 0,
+    createdAt: '',
+    updatedAt: '',
+});
 
   const fetchAdvice = async () => {
     try {
@@ -65,27 +80,61 @@ const LogPage = () => {
       console.error('Error fetching daily intake:', error.response ? error.response.data : error.message);
       // It's better to handle error setting here too if needed
     }
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/inbody/latest/${userUuid}`, {});
+/*
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }*/
+      
+      const savedData = await response.data;
+      setData({ ...data, ...savedData });
+      //setIsSaved(true);
+      console.log('The inbody data has been gotten.');
+  } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while saving the data.');
+  }
   };
   useEffect(() => {
     fetchEnergys();
   }, []);
 
+  const formatNumber = (number) => {
+    return isNaN(number) ? "0.0" : number.toFixed(1);
+};
 
   const handleGenerateAdvice = async (type) => {
-    try {
-      const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
-        memberUuid: userUuid,
-        date: mealDate
-      });
-      console.log('Food feedback:', response.data);
-      setDailyFeedback(response.data.content);
-      setAdvice(type === 'today' ? response.data.content : '일주일의 피드백입니다.');
-    } catch (error) {
-      console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
+    if(type ==='today'){
+      try {
+        const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
+          memberUuid: userUuid,
+          date: mealDate
+        });
+        console.log('Food feedback:', response.data);
+        setDailyFeedback(response.data.content);
+        setAdvice(type === 'today' ? response.data.content : '일주일의 피드백입니다.');
+      } catch (error) {
+        console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
+      }
+    } else {
+      try {
+        const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
+          memberUuid: userUuid
+        });
+        console.log('inbody feedback:', response.data);
+        setDailyFeedback(response.data.content);
+        setAdvice(response.data.content);
+      } catch (error) {
+        console.error('Error making inbody-feedback:', error.response ? error.response.data : error.message);
+      }
     }
+
+    
+    /*
     setAdvice(type === 'today' ? 
     dailyFeedback : 
-    '일주일의 피드백입니다.');
+    '일주일의 피드백입니다.');*/
   };
 
   const handleGenerateRecommendations = () => {
@@ -104,23 +153,89 @@ const LogPage = () => {
     <section className="text-gray-600 body-font relative bg-white w-[95%] mx-auto mt-5">
     <div className="log-page">
       <h1>오늘의 결과를 확인하세요!</h1>
+      <div className="advice-header">
+        <button onClick={() => setViewMode('diet')}
+        className='inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5'
+        >식단</button>
+        <button onClick={() => setViewMode('inbody')}
+        className='inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5'
+        >인바디</button>
+      </div>
+      {viewMode === 'diet' &&(
       <div className="nutrition-bars">
         {/* 가짜 데이터 */}
         <div>에너지 {energy} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={energy / maxEntry * 100} />
+        <NutritionBar label="|" percentage={(energy / maxEntry * 100).toFixed(1)} />
         <div>탄수화물 {carbs} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={carbs / maxEntry * 100} />
+        <NutritionBar label="|" percentage={(carbs / maxEntry * 100).toFixed(1)} />
         <div>단백질 {protein} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={protein / maxEntry * 100} />
+        <NutritionBar label="|" percentage={(protein / maxEntry * 100).toFixed(1)} />
         <div>지방 {fat} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={fat / maxEntry * 100} />
+        <NutritionBar label="|" percentage={(fat / maxEntry * 100).toFixed(1)} />
       </div>
+)}
+{viewMode === 'inbody' &&(
+  <>
+      <div className="analysis-section">
+      <h2>Muscle-Fat Analysis</h2>
+      <div className="bar-container">
+          <div className="bar-label">체중</div>
+          <div className="bar">
+              <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}>
+                  <span className="bar-text">체중</span>
+              </div>
+          </div>
+          <div className="bar-value">{formatNumber(data.bodyWeight)}</div>
+      </div>
+      <div className="bar-container">
+          <div className="bar-label">골격근량</div>
+          <div className="bar">
+              <div className="bar-fill" style={{ width: `${data.muscleMass}%` }}>
+                  <span className="bar-text">골격근량</span>
+              </div>
+          </div>
+          <div className="bar-value">{formatNumber(data.muscleMass)}</div>
+      </div>
+      <div className="bar-container">
+          <div className="bar-label">체지방량</div>
+          <div className="bar">
+              <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}>
+                  <span className="bar-text">체지방량</span>
+              </div>
+          </div>
+          <div className="bar-value">{formatNumber(data.bodyFatMass)}</div>
+      </div>
+  </div>
+
+  <div className="analysis-section">
+      <h2>Obesity Analysis</h2>
+      <div className="bar-container">
+          <div className="bar-label">BMI</div>
+          <div className="bar">
+              <div className="bar-fill" style={{ width: `${data.bmi}%` }}>
+                  <span className="bar-text">BMI</span>
+              </div>
+          </div>
+          <div className="bar-value">{formatNumber(data.bmi)}</div>
+      </div>
+      <div className="bar-container">
+          <div className="bar-label">체지방률</div>
+          <div className="bar">
+              <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}>
+                  <span className="bar-text">체지방률</span>
+              </div>
+          </div>
+          <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
+      </div>
+  </div>
+  </>
+)}
       <div className="advice-section">
         <div className="advice-header">
           <h3 className="ai-advice">AI ADVICE</h3>
           <div className="advice-buttons">
-            <button onClick={() => handleGenerateAdvice('today')}>오늘</button>
-            <button onClick={() => handleGenerateAdvice('week')}>일주일</button>
+            <button onClick={() => handleGenerateAdvice('today')}>오늘 식단</button>
+            <button onClick={() => handleGenerateAdvice('inbody')}>인바디</button>
           </div>
         </div>
         <div className="advice-text">
