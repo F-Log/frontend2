@@ -148,6 +148,15 @@ function InBody() {
             <div className="analysis-section">
                 <h2>Muscle-Fat Analysis</h2>
                 <div className="bar-container">
+                    <div className="bar-label">키</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.height}%` }}>
+                            <span className="bar-text">키</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.height)}</div>
+                </div>
+                <div className="bar-container">
                     <div className="bar-label">체중</div>
                     <div className="bar">
                         <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}>
@@ -179,13 +188,13 @@ function InBody() {
             <div className="analysis-section">
                 <h2>Obesity Analysis</h2>
                 <div className="bar-container">
-                    <div className="bar-label">BMI</div>
+                    <div className="bar-label">제지방량</div>
                     <div className="bar">
-                        <div className="bar-fill" style={{ width: `${data.bmi}%` }}>
-                            <span className="bar-text">BMI</span>
+                        <div className="bar-fill" style={{ width: `${data.fatFreeMass}%` }}>
+                            <span className="bar-text">제지방량</span>
                         </div>
                     </div>
-                    <div className="bar-value">{formatNumber(data.bmi)}</div>
+                    <div className="bar-value">{formatNumber(data.fatFreeMass)}</div>
                 </div>
                 <div className="bar-container">
                     <div className="bar-label">체지방률</div>
@@ -196,9 +205,25 @@ function InBody() {
                     </div>
                     <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
                 </div>
+                <div className="bar-container">
+                    <div className="bar-label">기초대사량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.basalMetabolicRate}%` }}>
+                            <span className="bar-text">기초대사량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.basalMetabolicRate)}</div>
+                </div>
             </div>
     
             <div className="input-section">
+                <input
+                    type="number"
+                    name="height"
+                    placeholder="Height"
+                    value={data.height}
+                    onChange={handleChange}
+                />
                 <input
                     type="number"
                     name="bodyWeight"
@@ -222,9 +247,9 @@ function InBody() {
                 />
                 <input
                     type="number"
-                    name="bmi"
-                    placeholder="BMI"
-                    value={data.bmi}
+                    name="fatFreeMass"
+                    placeholder="Fat Free Mass"
+                    value={data.fatFreeMass}
                     onChange={handleChange}
                 />
                 <input
@@ -234,6 +259,14 @@ function InBody() {
                     value={data.bodyFatPercentage}
                     onChange={handleChange}
                 />
+                <input
+                    type="number"
+                    name="basalMetabolicRate"
+                    placeholder="Basal Metabolic Rate"
+                    value={data.basalMetabolicRate}
+                    onChange={handleChange}
+                />
+                
                 <button onClick={handleSave}>Save</button>
             </div>
     
