@@ -48,7 +48,13 @@ const LogPage = () => {
     fatFreeMass: 0,
     createdAt: '',
     updatedAt: '',
-});
+  });
+  const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
+  const [foodData, setFoodData] = useState('');
+  const handleChangeMealType = (e) => {
+    setFoodData(e.target.value);
+    //setFoodData(e.target.value === 'MORNING' ? '아침' : e.target.value === 'LUNCH' ? '점심' : e.target.value === 'DINNER' ? '저녁' : '간식');
+  };
 
   const fetchAdvice = async () => {
     try {
@@ -117,16 +123,37 @@ const LogPage = () => {
       } catch (error) {
         console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
       }
-    } else {
+    } else if(type === 'inbody') {
       try {
-        const response = await axios.post("http://localhost:8080/api/v1/gpt/daily-diet-feedback", {
-          memberUuid: userUuid
-        });
-        console.log('inbody feedback:', response.data);
+        const response = await axios.post("http://localhost:8080/api/v1/gpt/inbody-feedback", 
+          `"${data.inbodyUuid}"`, // UUID 값을 문자열로 보냅니다.
+          {
+            headers: {
+              'Content-Type': 'application/json' // 서버가 JSON 형식을 요구하므로 헤더 설정에 이를 명시합니다.
+            }
+          }
+        );
+        console.log('Inbody feedback:', response.data);
         setDailyFeedback(response.data.content);
         setAdvice(response.data.content);
       } catch (error) {
         console.error('Error making inbody-feedback:', error.response ? error.response.data : error.message);
+      }
+      
+      
+    } else {
+      try {
+        const dietUuid = localStorage.getItem(`${foodData}Uuid`);
+        console.log('dietUuid:', dietUuid);
+        const response = await axios.post("http://localhost:8080/api/v1/gpt/diet-feedback", {
+          dietUuid: dietUuid || '' ,
+          memberUuid: userUuid
+        });
+        console.log(foodData, 'diet feedback:', response.data);
+        setDailyFeedback(response.data.content);
+        setAdvice(response.data.content);
+      } catch (error) {
+        console.error('Error making diet-feedback:', error.response ? error.response.data : error.message);
       }
     }
 
@@ -233,21 +260,36 @@ const LogPage = () => {
       <div className="advice-section">
         <div className="advice-header">
           <h3 className="ai-advice">AI ADVICE</h3>
+          <label>
+            식사 유형:
+            <select value={foodData.mealType} onChange={handleChangeMealType}>
+              {mealTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type === 'MORNING' && '아침'}
+                  {type === 'LUNCH' && '점심'}
+                  {type === 'DINNER' && '저녁'}
+                  {type === 'SNACK' && '간식'}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="advice-buttons">
             <button onClick={() => handleGenerateAdvice('today')}>오늘 식단</button>
             <button onClick={() => handleGenerateAdvice('inbody')}>인바디</button>
+            <button onClick={() => handleGenerateAdvice('diet')}>식단 추천</button>
           </div>
         </div>
         <div className="advice-text">
           {advice}
         </div>
       </div>
+      {/*
       <div className="recommendations-section">
         <button onClick={handleGenerateRecommendations}
         className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
         >추천 식단</button>
         <div className="recommendation-list">
-          {/* 사진 출력 방식: 서버한테 요청 후 없으면 육류/생선류 등 대분류 사진 출력 */}
+          
         {recommendations.map((item, index) => (
             <div key={index} className="recommendation-item">
               <img src={`${process.env.PUBLIC_URL}/img/${item.image}`} alt={item.name} />
@@ -255,7 +297,7 @@ const LogPage = () => {
             </div>
           ))}
         </div>
-      </div>
+        </div>*/}
     </div>
     </section>
   );
