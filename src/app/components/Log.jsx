@@ -204,57 +204,75 @@ const LogPage = () => {
 {viewMode === 'inbody' &&(
   <>
       <div className="analysis-section">
-      <h2>Muscle-Fat Analysis</h2>
-      <div className="bar-container">
-          <div className="bar-label">체중</div>
-          <div className="bar">
-              <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}>
-                  <span className="bar-text">체중</span>
-              </div>
-          </div>
-          <div className="bar-value">{formatNumber(data.bodyWeight)}</div>
-      </div>
-      <div className="bar-container">
-          <div className="bar-label">골격근량</div>
-          <div className="bar">
-              <div className="bar-fill" style={{ width: `${data.muscleMass}%` }}>
-                  <span className="bar-text">골격근량</span>
-              </div>
-          </div>
-          <div className="bar-value">{formatNumber(data.muscleMass)}</div>
-      </div>
-      <div className="bar-container">
-          <div className="bar-label">체지방량</div>
-          <div className="bar">
-              <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}>
-                  <span className="bar-text">체지방량</span>
-              </div>
-          </div>
-          <div className="bar-value">{formatNumber(data.bodyFatMass)}</div>
-      </div>
-  </div>
-
-  <div className="analysis-section">
-      <h2>Obesity Analysis</h2>
-      <div className="bar-container">
-          <div className="bar-label">BMI</div>
-          <div className="bar">
-              <div className="bar-fill" style={{ width: `${data.bmi}%` }}>
-                  <span className="bar-text">BMI</span>
-              </div>
-          </div>
-          <div className="bar-value">{formatNumber(data.bmi)}</div>
-      </div>
-      <div className="bar-container">
-          <div className="bar-label">체지방률</div>
-          <div className="bar">
-              <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}>
-                  <span className="bar-text">체지방률</span>
-              </div>
-          </div>
-          <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
-      </div>
-  </div>
+                <h2>주요 신체 지표</h2>
+                <div className="bar-container">
+                    <div className="bar-label">키</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.height}%` }}>
+                            <span className="bar-text">키</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.height)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">체중</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyWeight}%` }}>
+                            <span className="bar-text">체중</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyWeight)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">골격근량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.muscleMass}%` }}>
+                            <span className="bar-text">골격근량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.muscleMass)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">체지방량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}>
+                            <span className="bar-text">체지방량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyFatMass)}</div>
+                </div>
+            </div>
+    
+            <div className="analysis-section">
+                <h2>기타 분석 지표</h2>
+                <div className="bar-container">
+                    <div className="bar-label">제지방량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.fatFreeMass}%` }}>
+                            <span className="bar-text">제지방량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.fatFreeMass)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">체지방률</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.bodyFatPercentage}%` }}>
+                            <span className="bar-text">체지방률</span>
+                        </div>  
+                    </div>
+                    <div className="bar-value">{formatNumber(data.bodyFatPercentage)}</div>
+                </div>
+                <div className="bar-container">
+                    <div className="bar-label">기초대사량</div>
+                    <div className="bar">
+                        <div className="bar-fill" style={{ width: `${data.basalMetabolicRate}%` }}>
+                            <span className="bar-text">기초대사량</span>
+                        </div>
+                    </div>
+                    <div className="bar-value">{formatNumber(data.basalMetabolicRate)}</div>
+                </div>
+            </div>
   </>
 )}
       <div className="advice-section">
