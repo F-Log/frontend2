@@ -51,7 +51,7 @@ const LogPage = () => {
     updatedAt: '',
   });
   const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
-  const [foodData, setFoodData] = useState('');
+  const [foodData, setFoodData] = useState('MORNING');
   const handleChangeMealType = (e) => {
     setFoodData(e.target.value);
     //setFoodData(e.target.value === 'MORNING' ? '아침' : e.target.value === 'LUNCH' ? '점심' : e.target.value === 'DINNER' ? '저녁' : '간식');
@@ -145,12 +145,12 @@ const LogPage = () => {
     } else {
       try {
         const dietUuid = localStorage.getItem(`${foodData}Uuid`);
-        console.log('dietUuid:', dietUuid);
+        console.log(foodData, 'dietUuid:', dietUuid);
         const response = await axios.post("http://localhost:8080/api/v1/gpt/diet-feedback", {
-          dietUuid: dietUuid || '' ,
+          dietUuid: dietUuid || localStorage.getItem(`MORNINGUuid`) ,
           memberUuid: userUuid
         });
-        console.log(foodData, 'diet feedback:', response.data);
+        console.log(foodData.mealType, 'diet feedback:', response.data);
         setDailyFeedback(response.data.content);
         setAdvice(response.data.content);
       } catch (error) {
