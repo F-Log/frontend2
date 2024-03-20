@@ -77,3 +77,18 @@
 
 }
 
+.upload-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #76a9fa;
+  color: rgb(255, 255, 255); /* 여기에서 글씨 색상을 검은색으로 변경합니다. */
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px; /* '업로드 및 분석' 버튼과의 간격 */
+}
+
+.upload-button:hover {
+  background-color: #76a9fa;
+}
+
