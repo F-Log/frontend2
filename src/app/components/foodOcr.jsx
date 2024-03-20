@@ -3,31 +3,19 @@ import './foodOcr.css';
 
 function FoodOcr() {
   const [nutritionData, setNutritionData] = useState({
-    아침: { 탄수화물: 0, 단백질: 0, 지방: 0 },
-    점심: { 탄수화물: 0, 단백질: 0, 지방: 0 },
-    저녁: { 탄수화물: 0, 단백질: 0, 지방: 0 },
-    간식: { 탄수화물: 0, 단백질: 0, 지방: 0 },
+    아침: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
+    점심: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
+    저녁: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
+    간식: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
   });
 
-  const [selectedMeal, setSelectedMeal] = useState('아침'); // 현재 선택된 식사 시간
+  const [selectedMeal, setSelectedMeal] = useState('아침');
   const [image, setImage] = useState(null);
+  
 
-  const calculateTotalNutrients = () => {
-    return {
-      탄수화물: Object.values(nutritionData).reduce((acc, meal) => acc + (meal?.탄수화물 || 0), 0),
-      단백질: Object.values(nutritionData).reduce((acc, meal) => acc + (meal?.단백질 || 0), 0),
-      지방: Object.values(nutritionData).reduce((acc, meal) => acc + (meal?.지방 || 0), 0),
-    };
-  };
+  const dailyLimits = { 탄수화물: 500, 단백질: 500, 지방: 500, totalKcal: 5000 };
 
-  const totalIntake = calculateTotalNutrients();
 
-  const dailyLimits = { 탄수화물: 500, 단백질: 500, 지방: 500, totalKcal: 4000 };
-
-  const totalCalories =
-    totalIntake.탄수화물 * 4 +
-    totalIntake.단백질 * 4 +
-    totalIntake.지방 * 9;
 
   const handleNutrientChange = (e, nutrient) => {
     const value = e.target.value ? parseInt(e.target.value, 10) : 0;
@@ -35,12 +23,14 @@ function FoodOcr() {
       ...prev,
       [selectedMeal]: {
         ...prev[selectedMeal],
-        [nutrient]: value
+        [nutrient]: value,
+        // 총칼로리 값을 직접 수정하지 않기 때문에 여기서는 변경하지 않습니다.
       }
     }));
   };
 
   const getBarFill = (nutrientValue, nutrientType) => {
+    const dailyLimits = { 탄수화물: 500, 단백질: 500, 지방: 500, 총칼로리: 5000 };
     return (nutrientValue / dailyLimits[nutrientType]) * 100 + '%';
   };
 
@@ -78,7 +68,8 @@ function FoodOcr() {
         [selectedMeal]: {
           탄수화물: parseInt(data.carbohydrate, 10) || 0,
           단백질: parseInt(data.protein, 10) || 0,
-          지방: parseInt(data.fat, 10) || 0
+          지방: parseInt(data.fat, 10) || 0,
+          총칼로리: parseInt(data.calories, 10) || 0, // 서버에서 받아온 칼로리 값을 사용합니다.
         }
       }));
     } catch (error) {
@@ -88,7 +79,6 @@ function FoodOcr() {
 
   return (
     <div className="foodlog-container">
-      {/* 이미지 업로드 섹션 */}
       <div className="image-upload-section">
         <label htmlFor="food-nutrition-upload">식품성분표 업로드</label>
         <input
@@ -100,20 +90,22 @@ function FoodOcr() {
         <button onClick={uploadImageAndAnalyze}>업로드 및 분석</button>
       </div>
 
-      {/* 총 섭취량 바 */}
       <div className="total-intake-section">
-        <h2>총 섭취 칼로리: {totalCalories} kcal</h2>
+        <h2>총 칼로리: {nutritionData[selectedMeal].총칼로리} kcal</h2>
         <div className="bar-container">
           <div className="bar">
-            <div
+          <div
               className="bar-fill"
-              style={{ width: `${(totalCalories / dailyLimits.totalKcal) * 100}%` }}
+              style={{ width: getBarFill(nutritionData[selectedMeal].총칼로리, '총칼로리') }}
             >
-              <span className="bar-text">{totalCalories} / {dailyLimits.totalKcal} kcal</span>
+              <span className="bar-text">
+                {nutritionData[selectedMeal].총칼로리} / 2000 kcal
+              </span>
             </div>
           </div>
         </div>
       </div>
+
 
       {/* 식사 선택 버튼들 */}
       <div className="meal-select-section">
@@ -136,10 +128,10 @@ function FoodOcr() {
             <div className="bar">
               <div
                 className="bar-fill"
-                style={{ width: getBarFill(nutritionData[selectedMeal]?.[nutrient] || 0, nutrient) }}
+                style={{ width: getBarFill(nutritionData[selectedMeal][nutrient], nutrient) }}
               >
                 <span className="bar-text">
-                  {nutritionData[selectedMeal]?.[nutrient] || 0} / {dailyLimits[nutrient]} g
+                  {nutritionData[selectedMeal][nutrient]} / {nutrient === '총칼로리' ? '2000 kcal' : 'g'}
                 </span>
               </div>
             </div>
@@ -147,18 +139,19 @@ function FoodOcr() {
         ))}
       </div>
 
+
       {/* 영양소 섭취량 입력 섹션 */}
       <div className="nutrition-input-section">
         <h2>{selectedMeal}의 섭취량 입력</h2>
-        {Object.keys(dailyLimits).map((nutrient) => (
+        {Object.keys(nutritionData[selectedMeal]).map((nutrient) => (
           <div className="input-group" key={nutrient}>
             <label>{nutrient}</label>
             <input
               type="number"
-              value={nutritionData[selectedMeal]?.[nutrient] || ''}
+              value={nutritionData[selectedMeal][nutrient] || ''}
               onChange={(e) => handleNutrientChange(e, nutrient)}
             />
-            <span>g</span>
+            <span>{nutrient === '총칼로리' ? 'kcal' : 'g'}</span>
           </div>
         ))}
       </div>
