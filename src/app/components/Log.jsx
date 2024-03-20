@@ -33,7 +33,7 @@ const LogPage = () => {
   const [carbs, setCarbs] = useState(0);
   const [protein, setProtein] = useState(0);
   const [fat, setFat] = useState(0);
-  const [maxEntryCalories, setMaxEntryCalories] = useState(500);
+  const [maxEntryCalories, setMaxEntryCalories] = useState(5000);
   const [maxEntry, setMaxEntry] = useState(500);
   const [viewMode, setViewMode] = useState('diet');
   const [data, setData] = useState({
