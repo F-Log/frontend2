@@ -131,6 +131,7 @@
 
 .submenu li {
   background-color: white;
+  transition: 0.3s;
 }
 
 .submenu li:hover {
