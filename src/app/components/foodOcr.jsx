@@ -80,15 +80,21 @@ function FoodOcr() {
   return (
     <div className="foodlog-container">
       <div className="image-upload-section">
-        <label htmlFor="food-nutrition-upload">식품성분표 업로드</label>
+        {/* 숨겨진 파일 입력 필드 */}
         <input
           id="food-nutrition-upload"
           type="file"
           accept="image/*"
           onChange={handleImageChange}
+          style={{ display: 'none' }} // input을 숨깁니다.
         />
+        {/* 사용자 정의 버튼 */}
+        <label htmlFor="food-nutrition-upload" className="upload-button">
+          식품성분표 업로드
+        </label>
         <button onClick={uploadImageAndAnalyze}>업로드 및 분석</button>
       </div>
+
 
       <div className="total-intake-section">
         <h2>총 칼로리: {nutritionData[selectedMeal].총칼로리} kcal</h2>
@@ -99,7 +105,7 @@ function FoodOcr() {
               style={{ width: getBarFill(nutritionData[selectedMeal].총칼로리, '총칼로리') }}
             >
               <span className="bar-text">
-                {nutritionData[selectedMeal].총칼로리} / 2000 kcal
+                {nutritionData[selectedMeal].총칼로리} / 5000 kcal
               </span>
             </div>
           </div>
@@ -131,7 +137,7 @@ function FoodOcr() {
                 style={{ width: getBarFill(nutritionData[selectedMeal][nutrient], nutrient) }}
               >
                 <span className="bar-text">
-                  {nutritionData[selectedMeal][nutrient]} / {nutrient === '총칼로리' ? '2000 kcal' : 'g'}
+                  {nutritionData[selectedMeal][nutrient]} / {nutrient === '총칼로리' ? '5000 kcal' : 'g'}
                 </span>
               </div>
             </div>
