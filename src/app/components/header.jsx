@@ -20,7 +20,7 @@ function Header() {
             <button className="mr-5 hover:text-gray-900">FOOD</button>
             {showSubMenu && (
               <ul className="submenu absolute bg-white shadow-md mt-1">
-                <li><Link className="block px-4 py-2 hover:bg-gray-100" to="/ocr">OCR</Link></li>
+                <li><Link className="block px-4 py-2 hover:bg-gray-100" to="/FoodOcr">OCR</Link></li>
                 <li><Link className="block px-4 py-2 hover:bg-gray-100" to="/search">Search</Link></li>
               </ul>
             )}
