@@ -33,6 +33,7 @@ const LogPage = () => {
   const [carbs, setCarbs] = useState(0);
   const [protein, setProtein] = useState(0);
   const [fat, setFat] = useState(0);
+  const [maxEntryCalories, setMaxEntryCalories] = useState(500);
   const [maxEntry, setMaxEntry] = useState(500);
   const [viewMode, setViewMode] = useState('diet');
   const [data, setData] = useState({
@@ -191,8 +192,8 @@ const LogPage = () => {
       {viewMode === 'diet' &&(
       <div className="nutrition-bars">
         {/* 가짜 데이터 */}
-        <div>에너지 {energy} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={(energy / maxEntry * 100).toFixed(1)} />
+        <div>칼로리 {energy} / {maxEntryCalories}</div>
+        <NutritionBar label="|" percentage={(energy / maxEntryCalories * 100).toFixed(1)} />
         <div>탄수화물 {carbs} / {maxEntry}</div>
         <NutritionBar label="|" percentage={(carbs / maxEntry * 100).toFixed(1)} />
         <div>단백질 {protein} / {maxEntry}</div>

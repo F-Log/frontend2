@@ -138,10 +138,11 @@
 }
 
 .home-body {
-  background-image: url('img/homebackground.png');
+  /*background-image: url('img/homebackground.png');*/
   background-size: cover; /* 이미지가 컨테이너를 꽉 채우도록 설정 */
   background-position: center; /* 이미지가 중앙에 위치하도록 설정 */
   background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
+  background-color: white;
   height: 100vh; /* 뷰포트 높이에 맞춤 */
   display: flex;
   flex-direction: column;
@@ -151,7 +152,7 @@
 
 
 .center-text p {
-  color: white;
+  color: black;
   font-size: 2rem;
   text-align: center;
   margin-bottom: 20px; /* 텍스트와 버튼 사이의 공간 */
