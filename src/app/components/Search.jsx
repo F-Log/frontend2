@@ -690,11 +690,11 @@ function Search() {
                 <button className="delete-button" onClick={() => handleDeleteFood(index)}>X</button>
                 <button onClick={() => handleEditClick(index)}>Edit</button>
                 <div>식품명: {meal.foodName}</div>
-                <div>양: {meal.amount}g</div>
-                <div>에너지: {meal.energy}kcal</div>
-                <div>탄수화물: {meal.carbs}g</div>
-                <div>지방: {meal.fat}g</div>
-                <div>단백질: {meal.protein}g</div>
+                <div>양: {(meal.amount * meal.multiplier).toFixed(1)}g</div>
+                <div>에너지: {(meal.energy * meal.multiplier).toFixed(1)}kcal</div>
+                <div>탄수화물: {(meal.carbs * meal.multiplier).toFixed(1)}g</div>
+                <div>지방: {(meal.fat * meal.multiplier).toFixed(1)}g</div>
+                <div>단백질: {(meal.protein * meal.multiplier).toFixed(1)}g</div>
               </div>
             ))}
         </div>
