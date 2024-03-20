@@ -6,7 +6,7 @@ import DietRecord from './DietRecord';
 
 const RecordView = () => {
   const [view, setView] = useState('diet'); // 현재 보고 있는 뷰 상태
-  const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleDateSelect = (date) => {
     console.log('Selected date:', date);
@@ -51,6 +51,7 @@ const RecordView = () => {
   return (
     <section className="text-gray-600 body-font relative bg-white w-[95%] mx-auto mt-5 flex">
   <div className="flex-1">
+    
     <CalenderUI 
       selectedDate={selectedDate}
       onDateSelect={handleDateSelect}
@@ -64,7 +65,6 @@ const RecordView = () => {
       <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => setView('inbody')}>인바디</button>
       <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => setView('feedback')}>피드백</button>
     </div>
-    
     <div>
       {renderView()}
     </div>
