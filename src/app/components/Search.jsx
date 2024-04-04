@@ -4,7 +4,10 @@ import { useUser } from "./FoodContext";
 import axios from "axios";
 
 function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
-  
+  const [iniCarb, setIniCarb] = useState((foodData.carbs / foodData.multiplier).toFixed(2));
+  const [iniFat, setIniFat] = useState((foodData.fat / foodData.multiplier).toFixed(2));
+  const [iniProtein, setIniProtein] = useState((foodData.protein / foodData.multiplier).toFixed(2));
+  const [iniEnergy, setIniEnergy] = useState((foodData.energy / foodData.multiplier).toFixed(2));
 
   const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
 
@@ -17,23 +20,40 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
     onClose(); // 팝업 닫기
   };
   
-  const handleChange = (name, value) => {
+  // const handleChange = (name, value) => {
+  //   setFoodData(prev => ({ ...prev, [name]: value }));
+  // };
+  const handleAmountChange = (name, value) => {
     setFoodData(prev => ({ ...prev, [name]: value }));
+    setFoodData(prev => ({ ...prev, energy: (iniEnergy * value).toFixed(2) }));
+    setFoodData(prev => ({ ...prev, carbs: (iniCarb * value).toFixed(2) }));  
+    setFoodData(prev => ({ ...prev, fat: (iniFat * value).toFixed(2) }));
+    setFoodData(prev => ({ ...prev, protein: (iniProtein * value).toFixed(2) }));
+  };
+
+  const handleChange = (name, value) => {
+    const input = (value/foodData.multiplier).toFixed(2);
+    setFoodData(prev => ({ ...prev, [name]: value }));
+    if (name === 'energy') {
+      setIniEnergy(input);
+    } else if (name === 'carbs') {
+      setIniCarb(input);
+    } else if (name === 'fat') {  
+      setIniFat(input);
+    } else if (name === 'protein') {
+      setIniProtein(input);
+    }
   };
 
   return (
     
     <div className="food-input-popup">
       {/*<h2>식품명: {selectedFood}</h2>*/}
-      <input 
-        type="text" 
-        placeholder='식품명을 입력하세요'
-        value={foodData.foodName} 
-        onChange={(e) => handleChange('foodName', e.target.value)} 
-      />
-      <label>
-        식사 유형:
-        <select value={foodData.mealType} onChange={handleChangeMealType}>
+      <div className="food-input-row">
+      <label
+      className="select-label">
+        <select 
+        value={foodData.mealType} onChange={handleChangeMealType}>
           {mealTypes.map((type) => (
             <option key={type} value={type}>
               {type === 'MORNING' && '아침'}
@@ -44,50 +64,80 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           ))}
         </select>
       </label>
-      <label>
-        먹은 양 (g):
+      <label className="food-name-label">
+        <input 
+
+          type="text" 
+          placeholder='식품명을 입력하세요'
+          value={foodData.foodName} 
+          onChange={(e) => handleChange('foodName', e.target.value)} 
+        />
+      </label>
+      <div className="amount-label-container">
+        <label
+        htmlFor="amountInput">
+          먹은 양 (g) :   {(foodData.amount * foodData.multiplier).toFixed(2)} g
+        </label>
         <input
+          id="amountInput"
           type="range"
           min="0.1"
           max="5.0"
           step="0.1"
           value={foodData.multiplier}
-          onChange={(e) => handleChange('multiplier', parseFloat(e.target.value))}
+          onChange={(e) => handleAmountChange('multiplier', parseFloat(e.target.value))}
         />
-        {(foodData.amount * foodData.multiplier).toFixed(2)} g
-      </label>
-      <label>
+      </div>
+      </div>
+      <div className='input-group'>
+      <label
+      class='flex'>
         에너지 (kcal):
         <input
+          class='inline-flex'
           type="number"
           value={foodData.energy}
           onChange={(e) => handleChange('energy', e.target.value)}
         />
       </label>
-      <label>
+      </div>
+      <div className="input-group">
+      <label
+      class='flex'>
+        
         탄수화물 (g):
         <input
+         class='inline-flex'
           type="number"
           value={foodData.carbs}
           onChange={(e) => handleChange('carbs', e.target.value)}
         />
       </label>
-      <label>
+      </div>
+      <div className="input-group">
+      <label
+      class='flex'>
         지방 (g):
         <input
+        class='inline-flex'
           type="number"
           value={foodData.fat}
           onChange={(e) => handleChange('fat', e.target.value)}
         />
       </label>
-      <label>
+      </div>
+      <div className="input-group">
+      <label
+      class='flex'>
         단백질 (g):
         <input
+        class='inline-flex'
           type="number"
           value={foodData.protein}
           onChange={(e) => handleChange('protein', e.target.value)}
         />
       </label>
+      </div>
       <div className="buttons">
         <button onClick={handleSave}
         className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
@@ -575,6 +625,7 @@ function Search() {
     } catch (error) {
       console.error(`Failed to delete the search with UUID: ${foodUuid}`, error);
     }
+    setIsPopupOpen(false);
   };
 
   return (
@@ -615,7 +666,7 @@ function Search() {
                   {search.foodName}
                   {/* 사용자가 지정한 검색어일 경우에만 삭제 버튼을 렌더링 */}
                   {search.isUserDefined && (
-                    <button onClick={() => handleDeleteSearch(search.foodUuid)}>삭제</button>
+                    <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteSearch(search.foodUuid)}>삭제</button>
                   )}
                 </div>
               ))}
@@ -687,14 +738,16 @@ function Search() {
             .filter((meal) => selectedMealType === 'all' || meal.mealType === selectedMealType)
             .map((meal, index) => (
               <div key={meal.id || index} className="meal-item">
-                <button className="delete-button" onClick={() => handleDeleteFood(index)}>X</button>
-                <button onClick={() => handleEditClick(index)}>Edit</button>
+                <div className="buttons">
+                <button className="btn btn-danger inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteFood(index)}>삭제</button>
+                <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleEditClick(index)}>편집</button>
+                </div>
                 <div>식품명: {meal.foodName}</div>
-                <div>양: {(meal.amount * meal.multiplier).toFixed(1)}g</div>
-                <div>에너지: {(meal.energy * meal.multiplier).toFixed(1)}kcal</div>
-                <div>탄수화물: {(meal.carbs * meal.multiplier).toFixed(1)}g</div>
-                <div>지방: {(meal.fat * meal.multiplier).toFixed(1)}g</div>
-                <div>단백질: {(meal.protein * meal.multiplier).toFixed(1)}g</div>
+                <div>양: {(meal.amount * meal.multiplier).toFixed(2)}g</div>
+                <div>에너지: {(meal.energy * 1).toFixed(2)}kcal</div>
+                <div>탄수화물: {(meal.carbs * 1).toFixed(2)}g</div>
+                <div>지방: {(meal.fat * 1).toFixed(2)}g</div>
+                <div>단백질: {(meal.protein * 1).toFixed(2)}g</div>
               </div>
             ))}
         </div>

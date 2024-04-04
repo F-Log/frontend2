@@ -270,7 +270,7 @@
   /* 필요한 추가 스타일링 */
 }
 
-/* FoodInputPopup.css */
+/* FoodInputPopup.css
 .food-input-popup {
   position: fixed;
   top: 50%;
@@ -280,8 +280,85 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Above other elements */
+  z-index: 1000;
+} */
+
+.food-input-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 600px;
 }
+
+.input-group label {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.food-input-popup input[type="number"],
+.food-input-popup input[type="range"],
+.food-input-popup input[type="text"]{
+  flex: 1;
+  margin-left: 10px;
+}
+
+
+.buttons {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  gap: 10px;
+}
+
+.food-input-row {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.food-name-label {
+  text-align: center;
+}
+/* 
+.amount-range-group label {
+  display: block;
+}
+
+.amount-range-group input[type="range"] {
+  width: 100%;
+  display: block;
+}
+
+.amount-label-container {
+  display: block;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.amount-label-container label,
+.amount-label-container .amount-output {
+  margin-right: 0.5rem;
+}
+
+.amount-label-container input[type="range"] {
+  flex-grow: 1;
+  margin-left: 0.5rem;
+} */
+
+
 
 .popup-header {
   display: flex;
