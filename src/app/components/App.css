@@ -297,12 +297,12 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 600px;
+  width: 700px;
 }
 
 .input-group label {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   width: 100%;
   margin-bottom: 5px;
 }
@@ -312,6 +312,7 @@
 .food-input-popup input[type="text"]{
   flex: 1;
   margin-left: 10px;
+  justify-content: space-around;
 }
 
 
@@ -331,6 +332,12 @@
 
 .food-name-label {
   text-align: center;
+}
+
+.amount-label-container {
+  /* display: flex; */
+  align-items: right;
+  margin-right: 0px;
 }
 /* 
 .amount-range-group label {

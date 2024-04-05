@@ -64,7 +64,8 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           ))}
         </select>
       </label>
-      <label className="food-name-label">
+      {/* <label className="food-name-label"> */}
+      <label className="input-group">
         <input 
 
           type="text" 
