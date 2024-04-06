@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import axios, { all } from "axios";
 import './Setting.css';
 
 function Setting() {
@@ -10,10 +10,12 @@ function Setting() {
   const [exerciseFrequency, setExerciseFrequency] = useState('');
   const [exerciseIntensity, setExerciseIntensity] = useState(''); // {"LIGHT", "MEDIUM", "HARD"}
   const [exerciseGoal, setExerciseGoal] = useState(''); // "LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"
+  const [allergy, setAllergy] = useState(''); // "LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"
   //const [inbodyAlert, setInbodyAlert] = useState('활성화');
   //const [inbodyAlertPeriod, setInbodyAlertPeriod] = useState('1달');
   //const [customPeriod, setCustomPeriod] = useState('');
   const userUuid = localStorage.getItem("userUuid");
+  const [allergyDeleted, setAllergyDeleted] = useState('');
 
   const isSelected = (buttonName, state) => state === buttonName;
   const settingsData = {
@@ -38,6 +40,16 @@ function Setting() {
         console.log(data.exercisePurpose);
       } catch (error) {
         console.error('Failed to fetch settings:', error.response ? error.response.data : error);
+      }
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/allergy/latest/${userUuid}`);
+        const data = response.data;
+        // Update your state with the fetched data
+        setAllergy(data.allergy);
+        setAllergyDeleted(data.uuid);
+        console.log(data.allergy);
+      } catch (error) {
+        console.error('Failed to fetch allergy settings:', error.response ? error.response.data : error);
       }
     };
   
@@ -79,6 +91,22 @@ const saveSettings = async () => {
       alert("업데이트 실패: " + (putError.response?.data?.message || "서버 오류"));
     }
   }
+  try {
+    const putResponse = await axios.post(`http://localhost:8080/api/v1/allergy/${userUuid}`, {allergy: allergy});
+    console.log('Settings updated:', putResponse.data);
+    try{
+      const deleteResponse = await axios.delete(`http://localhost:8080/api/v1/allergy/${allergyDeleted}`);
+      console.log('Settings deleted:', deleteResponse.data);
+    } catch (deleteError) {
+      console.error('Failed to delete allergy settings:', deleteError.response ? deleteError.response.data : deleteError);
+      alert("삭제 실패: " + (deleteError.response?.data?.message || "서버 오류"));
+    }
+    // alert("설정이 저장되었습니다!");
+  } catch (putError) {
+      console.error('Failed to update settings:', putError.response ? putError.response.data : putError);
+      alert("업데이트 실패: " + (putError.response?.data?.message || "서버 오류"));
+  }
+  
 };
 
 
@@ -118,6 +146,18 @@ const saveSettings = async () => {
         placeholder="일주일에 하는 운동 횟수"
         onChange={(e) => setExerciseFrequency(e.target.value)}
         min="0"
+      />
+    </div>
+    <div>알러지</div>
+    {/* 알러지 섹션 */}
+    <div className="exercise-frequency">
+        <input
+        type="text"
+        value={allergy}
+        className="w-full bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+        placeholder="먹으면 안되는 음식이 있나요?  ex. (알러지1, 알러지2, 알러지3, ...)"
+        onChange={(e) => setAllergy(e.target.value)}
+        
       />
     </div>
     <div>운동 강도</div>
@@ -181,7 +221,7 @@ const saveSettings = async () => {
           
       {/* 저장 및 취소 버튼 */}
       <div className="button-group">
-        <button onClick={saveSettings} className='save-btn selected inline-flex items-center bg-[#8801f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>저장</button>
+        <button onClick={saveSettings} className='cancel-btn selected inline-flex items-center bg-[#8801f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>저장</button>
         <button onClick={() => navigate('/home')} className='cancel-btn selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5'>취소</button>
       </div>
       {/* 비밀번호 변경 링크 */}
