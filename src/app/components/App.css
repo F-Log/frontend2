@@ -24,9 +24,9 @@
     cursor: pointer;
   }
   
-  button:hover {
+  /* button:hover {
     background-color: #555;
-  }
+  } */
   
   section {
     padding: 20px;
