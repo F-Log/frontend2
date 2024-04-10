@@ -24,9 +24,9 @@
     cursor: pointer;
   }
   
-  button:hover {
+  /* button:hover {
     background-color: #555;
-  }
+  } */
   
   section {
     padding: 20px;
@@ -383,9 +383,9 @@
   flex-direction: column;
 }
 
-label {
+/* label {
   margin-bottom: 10px;
-}
+} 이거 뭐지 이거 때문에 이상함 */
 
 input[type="number"],
 input[type="range"] {

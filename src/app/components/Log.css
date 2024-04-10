@@ -221,7 +221,7 @@
     font-size: 16px;
   }
   
-  button.save-btn, button.upload-btn {
+  /* button.save-btn, button.upload-btn {
     display: block;
     background-color: #27a9e0;
     color: #fff;
@@ -231,7 +231,7 @@
     font-size: 16px;
     cursor: pointer;
     margin-top: 20px;
-  }
+  } */
   
   button:hover {
     background-color: #1c8cb7;

@@ -143,7 +143,7 @@ function InBody() {
     return (
         <div className="inbody-container">
             <div className="buttons-section">
-                <label htmlFor="inbody-image-upload" className="upload-btn">인바디 용지 불러오기</label>
+                <label htmlFor="inbody-image-upload" className="upload-btn">인바디 사진 불러오기</label>
                 <input
                     id="inbody-image-upload"
                     type="file"
@@ -151,7 +151,7 @@ function InBody() {
                     onChange={handleImageChange}
                     style={{ display: 'none' }}
                 />
-                <button onClick={handleSave} className="save-btn">분석 및 저장</button>
+                <button onClick={handleSave} className="save-btn">분석</button>
             </div>
     
             <div className="analysis-section">
@@ -225,8 +225,9 @@ function InBody() {
                 </div>
             </div>
             <div className="analysis-message-section">
-                <h2>올바르지 않은 분석 결과는 수기로 수정해주세요.</h2>
-            </div>
+  <h2 className="highlighted">올바르지 않은 분석 결과는 수기로 수정해주세요.</h2>
+</div>
+
             <div className="input-section">
                 <div className="input-group">
                     <label htmlFor="height">키</label>
@@ -295,7 +296,7 @@ function InBody() {
                     />
                 </div>
                 <div className="input-group">
-                    <label htmlFor="basalMetabolicRate">체지방률</label>
+                    <label htmlFor="basalMetabolicRate">기초대사량</label>
                     <input
                         type="number"
                         name="basalMetabolicRate"
@@ -317,7 +318,7 @@ function InBody() {
     
             <div className="ai-advice-section">
                 <div className="ai-advice-header">
-                    <h2>AI ADVISE</h2>
+                    <h2>인바디 피드백</h2>
                     <button onClick={fetchAIAdvice} className="generate-advice-btn">생성</button>
                 </div>
                 <textarea 
