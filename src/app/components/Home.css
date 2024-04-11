@@ -1,0 +1,68 @@
+.buttons-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 150px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+
+  .button {
+    /* width: 40%; */
+    background-color: #3B7666;
+    color: #fff;
+    
+    padding: 30px 50px;
+    margin: 30px 60px;
+    border: none;
+    border-radius: 15px;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  .red-button {
+    /* width: 40%; */
+    background-color: #ff5757;
+    color: #fff;
+    
+    padding: 30px 50px;
+    margin: 30px 60px;
+    border: none;
+    border-radius: 15px;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+.center-text{
+    font-weight: bold;
+}
+
+.lists-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 150px;
+    /* margin-top: 10px;
+    margin-bottom: 10px; */
+    margin: 60px 90px;
+  }
+.record-details{
+    cursor: pointer;
+    text-align: left;
+}
+
+  .diet-record{
+    margin: 30px 30px;
+    white-space: nowrap;
+  }
+  .details{
+    font-size: 12px;
+    text-align: left;
+  }

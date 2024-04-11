@@ -233,6 +233,45 @@ function Search() {
   }, []);
   
 
+  const useInitializeMealTypes = (userUuid) => {
+    useEffect(() => {
+      const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
+      const mealDate = new Date().toISOString().split('T')[0];
+      
+      async function checkAndInitializeMealTypes() {
+        for (const mealType of mealTypes) {
+          try {
+            const existingUuid = localStorage.getItem(`${mealType}Uuid`);
+            if (existingUuid) {
+              const response = await axios.get(`http://localhost:8080/api/v1/diet/${existingUuid}`);
+              if (response.data && response.data.memberUuid !== userUuid) {
+                throw new Error('UUID does not match');
+              }
+              console.log(`${mealType} is already initialized with UUID: ${response.data.dietUuid}`);
+            } else {
+              throw new Error('UUID is not initialized');
+            }
+          } catch (error) {
+            try {
+              const response = await axios.post(`http://localhost:8080/api/v1/diet/register`, {
+                memberUuid: userUuid,
+                mealType,
+                mealDate
+              });
+              const dietUuid = response.data.dietUuid;
+              localStorage.setItem(`${mealType}Uuid`, dietUuid);
+              console.log(`${mealType} initialized with UUID: ${dietUuid}`);
+            } catch (postError) {
+              console.error(`Failed to initialize ${mealType}: `, postError);
+            }
+          }
+        }
+      }
+      
+      checkAndInitializeMealTypes();
+    }, [userUuid]);
+  };
+
 
 /* 미사용 코드
   const initializeDiet = async (mealType) => {
