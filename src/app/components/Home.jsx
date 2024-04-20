@@ -69,7 +69,10 @@ function Home() {
   
     // record 클릭 핸들러 함수
     const handleRecordClick = (mealType) => {
-      navigate(`/HomeDetails/${mealType}`); // 클릭 시 mealType에 따라 HomeDetails 페이지로 라우팅합니다.
+      const records = dietRecords[mealType];
+      localStorage.setItem(`records_${mealType}`, JSON.stringify(records));
+
+      navigate(`/HomeDetails/${mealType}`, { state: { records: records } }); // 클릭 시 mealType에 따라 HomeDetails 페이지로 라우팅합니다.
     };
   
     return (
@@ -81,10 +84,10 @@ function Home() {
             onClick={() => handleRecordClick(record.mealType)} // div 클릭 시 handleRecordClick 함수 호출
           >
             <h4 className="font-semibold text-lg mb-2">{record.mealType}</h4>
-            <p className="mb-1">칼로리: {record.totalCalories} kcal</p>
-            <p className="mb-1">탄수화물: {record.totalCarbohydrate} g</p>
-            <p className="mb-1">단백질: {record.totalProtein} g</p>
-            <p className="mb-3">지방: {record.totalFat} g</p>
+            <p className="mb-1">칼로리: {(record.totalCalories * 1).toFixed(2)} kcal</p>
+            <p className="mb-1">탄수화물: {(record.totalCarbohydrate * 1).toFixed(2)} g</p>
+            <p className="mb-1">단백질: {(record.totalProtein * 1).toFixed(2)} g</p>
+            <p className="mb-3">지방: {(record.totalFat * 1).toFixed(2)} g</p>
             <p className="details"><u>자세히 보기</u></p>
           </div>
         ))}

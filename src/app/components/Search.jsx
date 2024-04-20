@@ -3,7 +3,7 @@ import { FoodContext } from './FoodContext';
 import { useUser } from "./FoodContext";
 import axios from "axios";
 
-function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
+function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
   const [iniCarb, setIniCarb] = useState((foodData.carbs / foodData.multiplier).toFixed(2));
   const [iniFat, setIniFat] = useState((foodData.fat / foodData.multiplier).toFixed(2));
   const [iniProtein, setIniProtein] = useState((foodData.protein / foodData.multiplier).toFixed(2));
@@ -99,6 +99,7 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           type="number"
           value={foodData.energy}
           onChange={(e) => handleChange('energy', e.target.value)}
+          disabled={fixed}
         />
       </label>
       </div>
@@ -112,6 +113,7 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           type="number"
           value={foodData.carbs}
           onChange={(e) => handleChange('carbs', e.target.value)}
+          disabled={fixed}
         />
       </label>
       </div>
@@ -124,6 +126,7 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           type="number"
           value={foodData.fat}
           onChange={(e) => handleChange('fat', e.target.value)}
+          disabled={fixed}
         />
       </label>
       </div>
@@ -136,6 +139,7 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave }) {
           type="number"
           value={foodData.protein}
           onChange={(e) => handleChange('protein', e.target.value)}
+          disabled={fixed}
         />
       </label>
       </div>
@@ -375,6 +379,7 @@ function Search() {
           memberUuid: userUuid,
           foodUuid: foodUuid,
           dietUuid: dietUuid,
+          foodName: updatedFoodData.foodName,
           quantity: updatedFoodData.multiplier,
           notes: ""
         });
@@ -486,6 +491,7 @@ function Search() {
         foodUuid: foodUuid,
         dietUuid: dietUuid,
         quantity: newUpdatedFoodData.multiplier,
+        foodName: foodData.foodName,
         notes: ""
       });
       console.log('Food logged:', dietResponse.data);
@@ -720,6 +726,7 @@ function Search() {
           setFoodData={setFoodData}
           onClose={() => setIsPopupOpen(false)}
           onSave={handleSaveFood} // onSave prop을 통해 handleSaveFood 함수 전달
+          fixed={true}
         />
       )}
       {isNewPopupOpen && (
@@ -728,6 +735,7 @@ function Search() {
           setFoodData={setNewFoodData} // Pass the setter function as a prop
           onClose={() => setIsNewPopupOpen(false)}
           onSave={handleCreateFood}
+          fixed={false}
         />
       )}
       {/* 미사용 코드

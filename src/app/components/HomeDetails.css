@@ -1,0 +1,406 @@
+.buttons-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 150px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+
+  .button {
+    /* width: 40%; */
+    background-color: #3B7666;
+    color: #fff;
+    
+    padding: 30px 50px;
+    margin: 30px 60px;
+    border: none;
+    border-radius: 15px;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  .red-button {
+    /* width: 40%; */
+    background-color: #ff5757;
+    color: #fff;
+    
+    padding: 30px 50px;
+    margin: 30px 60px;
+    border: none;
+    border-radius: 15px;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+.center-text{
+    font-weight: bold;
+}
+
+.lists-section {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* 한 줄에 모든 요소를 나열하도록 설정 */
+  overflow-x: auto; /* 가로 스크롤 가능하게 설정 */
+  align-items: flex-start; /* 항목들을 위쪽에 정렬 */
+  gap: 10px; /* 항목 사이의 간격 */
+  padding: 0 0; /* 좌우 패딩 */
+  margin: 60px 10px;
+}
+.a-record-details{
+  /* flex-direction: row; */
+  display: inline-block;
+    text-align: left;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.diet-record {
+  cursor: auto;
+  flex-direction: row;
+  overflow-x: auto;
+  white-space: normal;
+  flex-shrink: 0;
+  /* min-width: 250px; 최소 너비 설정 */
+  white-space: normal; /* 줄바꿈 허용 */
+  /* padding: 20px; 패딩 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  */
+}
+  .aadetails{
+    display: inline-block;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+  }
+
+
+  .log-page {
+    margin: auto;
+    width: 80%;
+    padding: 20px;
+  }
+  
+  .nutrition-bar-container {
+    margin: 10px 0;
+  }
+  
+  .nutrition-bar-label {
+    text-align: left;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .nutrition-bars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2개의 컬럼을 동일한 크기로 설정 */
+    gap: 20px; /* grid 아이템 사이의 간격 설정 */
+    margin-bottom: 20px; /* grid 아래쪽 여백 추가 */
+  }
+  .nutrition-bar {
+    align-items: left;
+    border-radius: 25px;
+    height: 30px;
+    width: 70%;
+    background-color: #eee;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    border: 2.5px solid black;
+  }
+  
+  .nutrition-bar-fill {
+    border-radius: 25px;
+    height: 100%;
+    background-color: blue;
+    position: absolute;
+  }
+  
+  .nutrition-bar-overflow {
+    border-radius: 25px;
+    height: 100%;
+    background-color: red;
+    position: absolute;
+    left: 0;
+  }
+  
+  .nutrition-bar-percentage {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  
+  .advice-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .advice-text {
+    background-color: #ccf;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  .advice-section {
+    background-color: #f0f7ff; /* Light blue background */
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items vertically */
+    max-width: 600px; /* Set a max width */
+    margin: 20px auto; /* Center the section horizontally with margin */
+  }
+
+  .advice-section button {
+    /* Styles for your buttons */
+    background-color: #88d1f9;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    margin-right: 10px; /* Adjust spacing between buttons */
+  }
+  
+  .advice-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Stretch across the full width of the parent */
+    margin-bottom: 10px; /* Add some space below the buttons */
+  }
+  .advice-buttons button:first-child {
+    margin-left: auto; /* Pushes the first button to the right */
+  }
+  .advice-button {
+    background-color: #88d1f9; /* Blue background */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .advice-button:not(:last-child) {
+    margin-right: 10px; /* Space between buttons */
+  }
+
+  h3.ai-advice {
+    font-weight: 800; /* or 900 */
+  }
+  .advice-text {
+    /* Styles for the advice text box */
+    background-color: #ced6ff;
+    padding: 20px;
+    border-radius: 10px;
+    flex-grow: 1; /* Allows the text box to fill the space */
+    margin-right: 10px; /* Adjust spacing between text box and buttons */
+  }
+  
+  .recommendations-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .recommendation-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Adjust the space between images */
+  }
+  
+  
+  .recommendation-item {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .recommendation-item img {
+    width: 100px; /* Set image size */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Make it round */
+    margin-bottom: 5px; /* Space below the image */
+  }
+  
+  /* Responsive adjustments might be necessary for smaller screens */
+  @media (max-width: 768px) {
+    .advice-buttons {
+      flex-direction: column;
+    }
+  
+    .advice-button {
+      width: 100%; /* Full width on smaller screens */
+      margin-bottom: 10px;
+    }
+  }
+  
+  
+
+  .inbody-container {
+    font-family: 'Arial', sans-serif;
+    margin: auto;
+    width: 80%;
+    max-width: 768px; /* Adjust width as needed */
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .inbody-container h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .bar-label {
+    width: 20%;
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .bar {
+    width: 80%;
+    background-color: #eee;
+    position: relative;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .bar-fill {
+    background-color: #27a9e0;
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease-in-out;
+  }
+  
+  .bar-text {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 12px;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .input-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  .input-group input {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  /* button.save-btn, button.upload-btn {
+    display: block;
+    background-color: #27a9e0;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+  } */
+  
+  button:hover {
+    background-color: #1c8cb7;
+  }
+  
+  /* Adjustments for Save and Cancel buttons */
+  .save-btn {
+    background-color: #4CAF50;
+  }
+  
+  .cancel-btn {
+    background-color: #f44336;
+    margin-left: 10px;
+  }
+
+  .muscle-fat-analysis-container {
+    margin-top: 30px;
+  margin-bottom: 30px; 
+}
+
+/* 혹은 Obesity Analysis 컨테이너에 이 클래스를 추가하세요 */
+.obesity-analysis-container {
+  margin-top: 30px; 
+  margin-bottom: 50px;
+}
+  /* Responsive adjustment */
+  @media (max-width: 768px) {s
+    .bar-label {
+      width: 30%;
+    }
+    .bar {
+      width: 70%;
+    }
+  }
+  
+.ai-advice-section {
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px; /* 위아래와 양 옆 여백 추가 */
+}
+
+.ai-advice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ai-advice-header h2 {
+  font-size: 24px; /* 글자 크기 키우기 */
+  font-weight: bold; /* 볼드체로 변경 */
+}
+
+.generate-advice-btn {
+  padding: 10px 20px; /* 버튼의 패딩 수정 */
+  background-color: #3B7666;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.generate-advice-btn:hover {
+  background-color: #1c8cb7;
+}
+
+.ai-advice-textarea {
+  width: calc(100% - 40px); /* 컨테이너의 너비에서 패딩 값 제외 */
+  height: 200px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  resize: none;
+  background-color: #eaf9e6; /* 연한 녹색 배경색 */
+}

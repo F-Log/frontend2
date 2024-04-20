@@ -6,7 +6,7 @@ export const FoodProvider = ({ children }) => {
   const [recentSearches, setRecentSearches] = useState([]);
   const [todaysMeals, setTodaysMeals] = useState([]);
   const [userUuid, setUserUuid] = useState(null);
-
+  
   return (
     <FoodContext.Provider value={{ recentSearches, setRecentSearches, todaysMeals, setTodaysMeals, userUuid, setUserUuid}}>
       {children}
