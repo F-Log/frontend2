@@ -29,30 +29,30 @@ function Header() {
           <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/log')}>오늘의 식단 결과</a>
           <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/inbodyOcr')}>인바디</a>
           <a className="mr-5 hover:text-gray-900" onClick={() => navigate('/calender')}>달력</a> */}
-          <ul class="menu">
-            <li class="lists">
+          <ul className="menu">
+            <li className="lists">
               <a href="#" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" onClick={() => navigate('/home')}>
                 <span className="ml-3 text-5xl text-[#3B7666]">F-log</span>
               </a>
             </li>
-            <li class="lists">
+            <li className="lists">
               <a href="#" className='px-4 py-2 hover:bg-gray-100 text-[#3B7666]'>식단 등록</a>
-              <ul class="submenu">
+              <ul className="submenu">
                 <li><a href="#" onClick={() => navigate('/FoodOCR')}>영양성분표 OCR</a></li>
                 <li><a href="#" onClick={() => navigate('/search')}>음식별 검색</a></li>
               </ul>
             </li>
-            <li class="lists">
+            <li className="lists">
               <a href="#" onClick={() => navigate('/log')}>오늘의 결과</a>
             </li>
-            <li class="lists">
+            <li className="lists">
               <a href="#">인바디</a>
-              <ul class="submenu">
+              <ul className="submenu">
                 <li><a href="#" onClick={() => navigate('/inbodyOcr')}>인바디 OCR</a></li>
                 <li><a href="#">인바디 그래프</a></li>
               </ul>
             </li>
-            <li class="lists">
+            <li className="lists">
               <a href="#" onClick={() => navigate('/calender')}>달력</a>
             </li>
             {/* <li className='settingbuttons'>
