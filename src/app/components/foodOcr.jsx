@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
 import './foodOcr.css';
+import inputOcr from './img/inputOcr.png'; // 이미지 임포트
+import React, { useState, useEffect } from 'react';
+
 
 function FoodOcr() {
   const [nutritionData, setNutritionData] = useState({
@@ -24,7 +26,18 @@ function FoodOcr() {
       [selectedMeal]: {
         ...prev[selectedMeal],
         [nutrient]: value,
-        // 총칼로리 값을 직접 수정하지 않기 때문에 여기서는 변경하지 않습니다.
+        총칼로리: prev[selectedMeal].총칼로리 + (nutrient === '총칼로리' ? value - prev[selectedMeal].총칼로리 : 0)
+      }
+    }));
+  };
+
+  const handleSliderChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    setNutritionData(prev => ({
+      ...prev,
+      [selectedMeal]: {
+        ...prev[selectedMeal],
+        총칼로리: value
       }
     }));
   };
@@ -37,7 +50,6 @@ function FoodOcr() {
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
-
   const uploadImageAndAnalyze = async () => {
     if (!image) {
       alert('식품 영양 표 이미지를 업로드해주세요.');
@@ -77,35 +89,58 @@ function FoodOcr() {
     }
   };
 
+  const [totalCalories, setTotalCalories] = useState(0);
+
+  useEffect(() => {
+    // 모든 식사 시간의 총칼로리를 합산하여 totalCalories 값을 업데이트
+    const total = Object.values(nutritionData).reduce((acc, meal) => {
+      return acc + meal.총칼로리;
+    }, 0);
+    setTotalCalories(total);
+  }, [nutritionData]);
+
   return (
+
+    
     <div className="foodlog-container">
+
+      {/* 식사 선택 버튼들 */}
+      <div className="meal-select-section">
+        <select name="meal-time" value={selectedMeal} onChange={(e) => setSelectedMeal(e.target.value)}>
+          {Object.keys(nutritionData).map((meal) => (
+            <option key={meal} value={meal}>
+              {meal}
+            </option>
+          ))}
+        </select>
+      </div>
+
+
       <div className="image-upload-section">
-        {/* 숨겨진 파일 입력 필드 */}
         <input
           id="food-nutrition-upload"
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          style={{ display: 'none' }} // input을 숨깁니다.
+          style={{ display: 'none' }}
         />
-        {/* 사용자 정의 버튼 */}
-        <label htmlFor="food-nutrition-upload" className="upload-button">
-          식품성분표 업로드
-        </label>
-        <button onClick={uploadImageAndAnalyze}>업로드 및 분석</button>
+        {/* 이미지를 클릭하면 파일 선택 다이얼로그가 나타나도록 설정 */}
+        <img src={inputOcr} alt="식품성분표 업로드" className="upload-image" onClick={() => document.getElementById('food-nutrition-upload').click()} />
       </div>
+
+      <button onClick={uploadImageAndAnalyze}>분석 시작</button>
 
 
       <div className="total-intake-section">
-        <h2>총 칼로리: {nutritionData[selectedMeal].총칼로리} kcal</h2>
+        <h2>총 칼로리: {totalCalories} kcal</h2>
         <div className="bar-container">
           <div className="bar">
-          <div
+            <div
               className="bar-fill"
-              style={{ width: getBarFill(nutritionData[selectedMeal].총칼로리, '총칼로리') }}
+              style={{ width: getBarFill(totalCalories, '총칼로리') }}
             >
               <span className="bar-text">
-                {nutritionData[selectedMeal].총칼로리} / 5000 kcal
+                {totalCalories} / 5000 kcal
               </span>
             </div>
           </div>
@@ -113,18 +148,7 @@ function FoodOcr() {
       </div>
 
 
-      {/* 식사 선택 버튼들 */}
-      <div className="meal-select-section">
-        {Object.keys(nutritionData).map((meal) => (
-          <button
-            key={meal}
-            className={`meal-select-button ${selectedMeal === meal ? 'active' : ''}`}
-            onClick={() => setSelectedMeal(meal)}
-          >
-            {meal}
-          </button>
-        ))}
-      </div>
+      
 
       {/* 각 식사에 대한 영양소 바 */}
       <div className="meal-nutrition-section">
@@ -145,10 +169,11 @@ function FoodOcr() {
         ))}
       </div>
 
+      <h2 className="highlighted">올바르지 않은 분석 결과는 수기로 수정해주세요.</h2>
 
       {/* 영양소 섭취량 입력 섹션 */}
       <div className="nutrition-input-section">
-        <h2>{selectedMeal}의 섭취량 입력</h2>
+        {/* <h2>{selectedMeal}의 섭취량 입력</h2> */}
         {Object.keys(nutritionData[selectedMeal]).map((nutrient) => (
           <div className="input-group" key={nutrient}>
             <label>{nutrient}</label>
@@ -161,7 +186,27 @@ function FoodOcr() {
           </div>
         ))}
       </div>
+
+      <h2 className="highlighted">올바르지 않은 분석 결과는 수기로 수정해주세요.</h2>
+
+
+            {/* 각 식사당 칼로리 조정 슬라이더 */}
+            <div className="calories-slider-section">
+        <label htmlFor="calories-slider">칼로리 조정</label>
+        <input
+          id="calories-slider"
+          type="range"
+          min="0"
+          max="5000"
+          value={nutritionData[selectedMeal].총칼로리}
+          onChange={handleSliderChange}
+        />
+      </div>
+
+      
     </div>
+
+    
   );
 }
 
