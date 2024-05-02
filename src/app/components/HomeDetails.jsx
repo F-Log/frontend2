@@ -285,6 +285,7 @@ function DietDetailPage() {
         </div>
         <div className="lists-section">
           {records.map((record, index) => (
+            console.log('record:', record),
             <DietRecord key={index} record={record} />
           ))}
         </div>

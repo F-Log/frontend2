@@ -127,9 +127,11 @@ function FoodOcr() {
         {/* 이미지를 클릭하면 파일 선택 다이얼로그가 나타나도록 설정 */}
         <img src={inputOcr} alt="식품성분표 업로드" className="upload-image" onClick={() => document.getElementById('food-nutrition-upload').click()} />
       </div>
-
+      <div className="analyze-start-button" >
+      
       <button onClick={uploadImageAndAnalyze}>분석 시작</button>
 
+      </div>
 
       <div className="total-intake-section">
         <h2>총 칼로리: {totalCalories} kcal</h2>

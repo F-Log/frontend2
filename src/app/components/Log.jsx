@@ -3,14 +3,14 @@ import './Log.css';
 import axios from "axios";
 
 const NutritionBar = ({ label, percentage }) => {
-  const barBackground = percentage > 100 ? 'red' : 'grey';
-  const barFill = percentage > 100 ? 'blue' : 'grey';
+  const barBackground = percentage > 100 ? '#FF8E8E' : 'grey';
+  const barFill = percentage > 100 ? '#6B8BFF' : '#6B8BFF';
   const barFillWidth = percentage > 100 ? '100%' : `${percentage}%`;
   const barOverflowWidth = percentage > 200 ? '100%' : `${percentage - 100}%`;
 
   return (
     <div className="nutrition-bar-container">
-      <span className="nutrition-bar-label">{label}</span>
+      <div className="nutrition-bar-label">{label}</div>
       <div className="nutrition-bar">
         <div className="nutrition-bar-fill" style={{ width: barFillWidth, backgroundColor: barFill }}></div>
         {percentage > 100 && (
@@ -21,7 +21,6 @@ const NutritionBar = ({ label, percentage }) => {
     </div>
   );
 };
-
 
 const LogPage = () => {
   const [advice, setAdvice] = useState('');
@@ -191,15 +190,14 @@ const LogPage = () => {
       </div>
       {viewMode === 'diet' &&(
       <div className="nutrition-bars">
-        {/* 가짜 데이터 */}
-        <div>칼로리 {energy} / {maxEntryCalories}</div>
-        <NutritionBar label="|" percentage={(energy / maxEntryCalories * 100).toFixed(1)} />
-        <div>탄수화물 {carbs} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={(carbs / maxEntry * 100).toFixed(1)} />
-        <div>단백질 {protein} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={(protein / maxEntry * 100).toFixed(1)} />
-        <div>지방 {fat} / {maxEntry}</div>
-        <NutritionBar label="|" percentage={(fat / maxEntry * 100).toFixed(1)} />
+        
+        <NutritionBar label={`| 칼로리 ${(energy * 1).toFixed(1)} / ${maxEntryCalories}`} percentage={(energy / maxEntryCalories * 100).toFixed(1)} />
+          
+          <NutritionBar label={`| 탄수화물 ${(carbs * 1).toFixed(1)} / ${maxEntry}`} percentage={(carbs / maxEntry * 100).toFixed(1)} />
+          
+          <NutritionBar label={`| 단백질 ${(protein * 1).toFixed(1)} / ${maxEntry}`} percentage={(protein / maxEntry * 100).toFixed(1)} />
+          
+          <NutritionBar label={`| 지방 ${(fat * 1).toFixed(1)} / ${maxEntry}`} percentage={(fat / maxEntry * 100).toFixed(1)} />
       </div>
 )}
 {viewMode === 'inbody' &&(
