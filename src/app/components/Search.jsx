@@ -326,11 +326,17 @@ function Search() {
                       dietFoodUuid: dietFoodResponse.data.dietfoodUuid,
                       foodUuid: dietFoodResponse.data.foodUuid,
                       foodName: foodResponse.data.foodName,
-                      amount: foodResponse.data.servingUnit,
+                      amount: foodResponse.data.servingUnit || 100,
                       calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
                       carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
                       protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
                       fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
+                      // foodName: dietFoodResponse.data.foodName,
+                      // amount: dietFoodResponse.data.servingUnit || 100,
+                      // calories: (dietFoodResponse.data.calories * dietFood.quantity).toFixed(2),
+                      // carbohydrate: (dietFoodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
+                      // protein: (dietFoodResponse.data.protein * dietFood.quantity).toFixed(2),
+                      // fat: (dietFoodResponse.data.fat * dietFood.quantity).toFixed(2)
                   };
               } catch (error) {
                   console.error('API 호출 중 에러 발생:', error);
@@ -349,10 +355,10 @@ function Search() {
       fetchFoodDetails();
       // ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
   }, [record, dietFoods, todaysMeals]);
-  if (!record) {
-    console.error("DietRecord 컴포넌트에 유효하지 않은 record가 전달됨.");
-    return null;  // record가 없으면 아무것도 렌더링하지 않음
-  }
+  // if (!record) {
+  //   console.error("DietRecord 컴포넌트에 유효하지 않은 record가 전달됨.");
+  //   return null;  // record가 없으면 아무것도 렌더링하지 않음
+  // }
   // const handleEditClick = (index) => {
   //   const mealToEdit = todaysMeals[index];
   //   setFoodData({
@@ -373,14 +379,14 @@ function Search() {
         carbs: parseFloat(carbohydrate),
         fat: parseFloat(fat),
         protein: parseFloat(protein),
-        mealType: selectedMealType, // 현재 선택된 식사 유형을 사용
+        mealType: "MORNING",
         dietfoodUuid: dietFoodUuid
     };
 
     setFoodData(updatedData);
     console.log('편집할 음식 정보:', foodDetail);
     console.log('편집될 음식 정보:', foodData);
-    setEditedMealIndex(foodDetails.findIndex((item) => item.dietfoodUuid === foodDetail.dietfoodUuid));
+    setEditedMealIndex(foodDetails.findIndex((item) => item.foodUuid === foodDetail.foodUuid));
     setIsPopupOpen(true);
 };
 
@@ -589,7 +595,12 @@ function Search() {
       }
       } catch (error) {
         // Handle the error if the POST request fails
-        console.error('Failed to log food:', error);
+        // console.error('Failed to log food:', error);
+        console.error('memberUuid:', userUuid,
+          'foodUuid:', foodUuid,
+          'dietUuid:', dietUuid,
+          'foodName:', updatedFoodData.foodName,
+          'quantity:', updatedFoodData.multiplier);
       }
       try {
         console.log(`식사 딜리트 fooddietUuid: `, deletingDietUuid);
@@ -852,7 +863,7 @@ function Search() {
     try {
       // 서버에 삭제 요청
       console.log(`음식정보 딜리트 foodUuid: `, foodUuid)
-      await axios.delete(`http://localhost:8080/api/v1/food/${foodUuid}`);
+      // await axios.delete(`http://localhost:8080/api/v1/food/${foodUuid}`);
       // 성공적으로 삭제되면, 클라이언트 측 상태 업데이트
       setRelatedSearches(relatedSearches.filter(search => search.foodUuid !== foodUuid));
     } catch (error) {
@@ -898,9 +909,11 @@ function Search() {
                 className="related-search-item">
                   {search.foodName}
                   {/* 사용자가 지정한 검색어일 경우에만 삭제 버튼을 렌더링 */}
-                  {/* {search.isUserDefined && (
-                    <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteSearch(search.foodUuid)}>삭제</button>
-                  )} */}
+                  {search.isUserDefined && (
+                    <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" 
+                    onClick={() => handleDeleteSearch(search.foodUuid)}
+                    >삭제</button>
+                  )}
                 </div>
               ))}
             </div>
