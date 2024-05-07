@@ -315,28 +315,30 @@ function Search() {
               try {
                   const dietFoodResponse = await axios.get(`http://localhost:8080/api/v1/dietfoods/${dietFood.dietfoodUuid}`);
                   console.log('3식품 정보를 가져옵니다:', dietFoodResponse.data);
-                  
+                  const notes = dietFoodResponse.data.notes;
+                  const [foodName, amount, calories, carbohydrate, protein, fat] = notes.split(', ').map(item => item.trim());
+
                   // 두 번째 API 호출
-                  const foodResponse = await axios.get(`http://localhost:8080/api/v1/food/${dietFoodResponse.data.foodUuid}`);
-                  console.log('4식품 정보를 가져옵니다:', foodResponse.data);
+                  // const foodResponse = await axios.get(`http://localhost:8080/api/v1/food/${dietFoodResponse.data.foodUuid}`);
+                  // console.log('4식품 정보를 가져옵니다:', foodResponse.data);
   
                   // 음식 정보와 계산된 값들을 객체로 반환
                   return {
                       ...dietFood,
                       dietFoodUuid: dietFoodResponse.data.dietfoodUuid,
                       foodUuid: dietFoodResponse.data.foodUuid,
-                      foodName: foodResponse.data.foodName,
-                      amount: foodResponse.data.servingUnit || 100,
-                      calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
-                      carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
-                      protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
-                      fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
-                      // foodName: dietFoodResponse.data.foodName,
-                      // amount: dietFoodResponse.data.servingUnit || 100,
-                      // calories: (dietFoodResponse.data.calories * dietFood.quantity).toFixed(2),
-                      // carbohydrate: (dietFoodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
-                      // protein: (dietFoodResponse.data.protein * dietFood.quantity).toFixed(2),
-                      // fat: (dietFoodResponse.data.fat * dietFood.quantity).toFixed(2)
+                      // foodName: foodResponse.data.foodName,
+                      // amount: foodResponse.data.servingUnit || 100,
+                      // calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
+                      // carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
+                      // protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
+                      // fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
+                      foodName: foodName,
+                      amount: amount || 100,
+                      calories: (parseFloat(calories) * dietFood.quantity).toFixed(2),
+                      carbohydrate: (parseFloat(carbohydrate) * dietFood.quantity).toFixed(2),
+                      protein: (parseFloat(protein) * dietFood.quantity).toFixed(2),
+                      fat: (parseFloat(fat) * dietFood.quantity).toFixed(2)
                   };
               } catch (error) {
                   console.error('API 호출 중 에러 발생:', error);
@@ -572,7 +574,7 @@ function Search() {
           dietUuid: dietUuid,
           foodName: updatedFoodData.foodName,
           quantity: updatedFoodData.multiplier,
-          notes: ""
+          notes: `${updatedFoodData.foodName}, ${updatedFoodData.servingUnit || 100}, ${updatedFoodData.energy}, ${updatedFoodData.carbs}, ${updatedFoodData.protein}, ${updatedFoodData.fat}`
         });
         console.log('Food logged:', response.data);
 
@@ -620,7 +622,7 @@ function Search() {
           foodUuid: foodUuid,
           dietUuid: dietUuid,
           quantity: updatedFoodData.multiplier,
-          notes: ""
+          notes: `${updatedFoodData.foodName}, ${updatedFoodData.servingUnit || 100}, ${updatedFoodData.energy}, ${updatedFoodData.carbs}, ${updatedFoodData.protein}, ${updatedFoodData.fat}`
         });
         console.log('Food logged:', response.data);
         updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
@@ -683,13 +685,14 @@ function Search() {
   
     
     console.log(`식사 유형 ${newUpdatedFoodData.mealType}에 대한 post dietUuid: `, dietUuid, `음식 uuid: `, foodUuid);
+    console.log(newUpdatedFoodData);
     try {
       const dietResponse = await axios.post("http://localhost:8080/api/v1/dietfoods/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
         foodUuid: foodUuid,
         dietUuid: dietUuid,
         quantity: newUpdatedFoodData.multiplier,
-        foodName: foodData.foodName,
-        notes: ""
+        foodName: newUpdatedFoodData.foodName,
+        notes: `${newUpdatedFoodData.foodName}, ${newUpdatedFoodData.servingUnit || 100}, ${newUpdatedFoodData.energy}, ${newUpdatedFoodData.carbs}, ${newUpdatedFoodData.protein}, ${newUpdatedFoodData.fat}`
       });
       console.log('Food logged:', dietResponse.data);
       //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
@@ -863,13 +866,14 @@ function Search() {
     try {
       // 서버에 삭제 요청
       console.log(`음식정보 딜리트 foodUuid: `, foodUuid)
-      // await axios.delete(`http://localhost:8080/api/v1/food/${foodUuid}`);
+      await axios.delete(`http://localhost:8080/api/v1/food/${foodUuid}`);
       // 성공적으로 삭제되면, 클라이언트 측 상태 업데이트
       setRelatedSearches(relatedSearches.filter(search => search.foodUuid !== foodUuid));
     } catch (error) {
       console.error(`Failed to delete the search with UUID: ${foodUuid}`, error);
     }
     setIsPopupOpen(false);
+    setIsNewPopupOpen(false);
   };
 
   return (
