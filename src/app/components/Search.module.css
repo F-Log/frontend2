@@ -1,0 +1,30 @@
+.lists-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+}
+
+.diet-record {
+    cursor: auto;
+  flex-direction: row;
+  overflow-x: auto;
+  white-space: normal;
+  flex-shrink: 0;
+  /* min-width: 250px; 최소 너비 설정 */
+  white-space: normal; /* 줄바꿈 허용 */
+  /* padding: 20px; 패딩 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  */
+    flex: 1 1 200px;  /* 최소 기준 너비를 200px로 설정 */
+}
+
+
+.aadetails{
+    display: inline-block;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+    margin: 0 10px 0 0;
+}

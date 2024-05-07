@@ -100,7 +100,7 @@
   /*margin-right: 10px; /* '업로드 및 분석' 버튼과의 간격 */
 }
 
-button {
+.analyze-start-button button {
   background-color: #3B7666;
   color: white;
   border: none;

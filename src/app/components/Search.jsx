@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { FoodContext } from './FoodContext';
 import { useUser } from "./FoodContext";
 import axios from "axios";
+import styles from "./Search.module.css";
 
 function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
   const [iniCarb, setIniCarb] = useState((foodData.carbs / foodData.multiplier).toFixed(2));
@@ -10,14 +11,15 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
   const [iniEnergy, setIniEnergy] = useState((foodData.energy / foodData.multiplier).toFixed(2));
 
   const mealTypes = ['MORNING', 'LUNCH', 'DINNER', 'SNACK'];
-
+  console.log('Food data:', foodData);
   const handleChangeMealType = (e) => {
     setFoodData({ ...foodData, mealType: e.target.value });
   };
 
   const handleSave = () => {
-    onSave(foodData); // 변경된 foodData를 onSave를 통해 상위 컴포넌트로 전달
-    onClose(); // 팝업 닫기
+    console.log('Saving food data:', foodData);
+    onSave(foodData);
+    onClose();
   };
   
   // const handleChange = (name, value) => {
@@ -33,7 +35,10 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
 
   const handleChange = (name, value) => {
     const input = (value/foodData.multiplier).toFixed(2);
+    const newFoodData = { ...foodData, [name]: value };
     setFoodData(prev => ({ ...prev, [name]: value }));
+    console.log(`Handling change for ${name}:`, value, 'Updated data:', newFoodData);
+    setFoodData(newFoodData);
     if (name === 'energy') {
       setIniEnergy(input);
     } else if (name === 'carbs') {
@@ -145,10 +150,10 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
       </div>
       <div className="buttons">
         <button onClick={handleSave}
-        className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
+        className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
         >확인</button>
         <button onClick={onClose}
-        className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
+        className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
         >닫기</button>
       </div>
     </div>
@@ -157,6 +162,13 @@ function FoodInputPopup({ foodData, setFoodData, onClose, onSave, fixed }) {
 }
 
 function Search() {
+  const [allRecords, setAllRecords] = useState({
+    MORNING: [],
+    LUNCH: [],
+    DINNER: [],
+    SNACK: []
+  });
+  const [forceUpdate, setForceUpdate] = useState(0);
   const userUuid = localStorage.getItem("userUuid");
   const [isInitialized, setIsInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -234,8 +246,188 @@ function Search() {
     };
   
     checkAndInitializeMealTypes();
+    
+    ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
   }, []);
+  const getFormattedDate = (date = new Date()) => {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+  const handleForceUpdate = () => {
+    setForceUpdate(forceUpdate + 1);
+  };
+
+  const fetchDietData = async (mealType) => {
+    const formattedDate = getFormattedDate();
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/diet/date-memberUuid`, {
+        params: { date: formattedDate, memberUuid: userUuid, mealType }
+      });
+      setAllRecords(prevRecords => ({
+        ...prevRecords,
+        [mealType]: response.data
+      }));
+      console.log("음식정보 수령 성공", mealType, response.data);
+    } catch (error) {
+      console.error('식단 정보를 가져오는 데 실패했습니다.', error);
+    }
+  };
+  const DietRecord = ({ record }) => {
+
+    // const [editMode, setEditMode] = useState(false);
+    // const [editableData, setEditableData] = useState({
+    //   foodName: record.foodName,
+    //   calories: record.calories,
+    //   carbs: record.carbohydrate,
+    //   protein: record.protein,
+    //   fat: record.fat,
+    // });
+    const [foodDetails, setFoodDetails] = useState([]);
+    const {dietFoods} = record;
+    
+    // const [foodData, setFoodData] = useState([
+    //   {
+    //     foodName: '',
+    //     amount: 0,
+    //     energy: 0,
+    //     carbs: 0,
+    //     protein: 0,
+    //     fat: 0
+    //   }
+    // ]);
+    // record 배열이 비어있지 않은지 확인하고 dietFoods를 추출합니다.
+    // const dietFoods = record.length > 0 ? record[0].dietFoods : [];
+    // console.log('record.length:', record.length);
+    // console.log('dietFoods:', dietFoods);
+    
+    
+    
+    
+    useEffect(() => {
+      const fetchFoodDetails = async () => {
+          console.log('식단 정보를 가져옵니다:', record);
   
+          // 첫 번째 API 호출을 모두 수행
+          const promises = dietFoods.map(async (dietFood) => {
+              try {
+                  const dietFoodResponse = await axios.get(`http://localhost:8080/api/v1/dietfoods/${dietFood.dietfoodUuid}`);
+                  console.log('3식품 정보를 가져옵니다:', dietFoodResponse.data);
+                  const notes = dietFoodResponse.data.notes;
+                  const [foodName, amount, calories, carbohydrate, protein, fat] = notes.split(', ').map(item => item.trim());
+
+                  // 두 번째 API 호출
+                  // const foodResponse = await axios.get(`http://localhost:8080/api/v1/food/${dietFoodResponse.data.foodUuid}`);
+                  // console.log('4식품 정보를 가져옵니다:', foodResponse.data);
+  
+                  // 음식 정보와 계산된 값들을 객체로 반환
+                  return {
+                      ...dietFood,
+                      dietFoodUuid: dietFoodResponse.data.dietfoodUuid,
+                      foodUuid: dietFoodResponse.data.foodUuid,
+                      // foodName: foodResponse.data.foodName,
+                      // amount: foodResponse.data.servingUnit || 100,
+                      // calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
+                      // carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
+                      // protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
+                      // fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
+                      foodName: foodName,
+                      amount: amount || 100,
+                      calories: (parseFloat(calories) * dietFood.quantity).toFixed(2),
+                      carbohydrate: (parseFloat(carbohydrate) * dietFood.quantity).toFixed(2),
+                      protein: (parseFloat(protein) * dietFood.quantity).toFixed(2),
+                      fat: (parseFloat(fat) * dietFood.quantity).toFixed(2)
+                  };
+              } catch (error) {
+                  console.error('API 호출 중 에러 발생:', error);
+                  return {};  // 실패 시 빈 객체 반환
+              }
+          });
+  
+          Promise.all(promises)
+              .then(results => {
+                  setFoodDetails(results);
+                  console.log('식품 정보를 가져옵니다:', results);
+              })
+              .catch(error => console.error('API 호출 중 에러 발생:', error));
+      };
+  
+      fetchFoodDetails();
+      // ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
+  }, [record, dietFoods, todaysMeals]);
+  // if (!record) {
+  //   console.error("DietRecord 컴포넌트에 유효하지 않은 record가 전달됨.");
+  //   return null;  // record가 없으면 아무것도 렌더링하지 않음
+  // }
+  // const handleEditClick = (index) => {
+  //   const mealToEdit = todaysMeals[index];
+  //   setFoodData({
+  //     ...mealToEdit
+  //   });
+  //   setEditedMealIndex(index);
+  //   setIsPopupOpen(true);
+  // };
+  const handleEditClick = (foodDetail) => {
+    const { calories, carbohydrate, dietFoodUuid, fat, amount, foodName, foodUuid, protein, quantity } = foodDetail;
+    const updatedData = {
+        foodUuid: foodUuid,
+        dietFoodUuid: dietFoodUuid,
+        foodName: foodName,
+        multiplier: quantity,
+        amount: amount,
+        energy: parseFloat(calories),
+        carbs: parseFloat(carbohydrate),
+        fat: parseFloat(fat),
+        protein: parseFloat(protein),
+        mealType: "MORNING",
+        dietfoodUuid: dietFoodUuid
+    };
+
+    setFoodData(updatedData);
+    console.log('편집할 음식 정보:', foodDetail);
+    console.log('편집될 음식 정보:', foodData);
+    setEditedMealIndex(foodDetails.findIndex((item) => item.foodUuid === foodDetail.foodUuid));
+    setIsPopupOpen(true);
+};
+
+  
+  const deleteHandler = async (dietFoodUuid, index) => {
+    // 서버에 DELETE 요청 보내기
+    try {
+      const response = await axios.delete(`http://localhost:8080/api/v1/dietfoods/${dietFoodUuid}`);
+      console.log(response.data); // 응답 로깅
+      // 삭제가 성공적이면, 클라이언트 상의 리스트에서도 해당 항목 제거
+      setFoodDetails(prevDetails => prevDetails.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error('삭제 중 오류가 발생했습니다', error.response || error);
+    }
+    ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
+  };
+  return (
+    <>
+        <div className="styles.diet-record">
+            {foodDetails.map((foodDetail, index) => (
+                <div
+                    key={index}
+                    className="a-record-details p-4 mb-4 bg-gray-100 rounded-lg shadow"
+                    
+                >
+                    <p className="aadetails" onClick={() => deleteHandler(foodDetail.dietfoodUuid, index)}><u>삭제</u></p>
+                    <p className="aadetails" onClick={() => handleEditClick(foodDetail)}><u>편집</u></p>
+                    <h4 className="font-semibold text-lg mb-2">{foodDetail.foodName}</h4>
+                    <p className="mb-1">칼로리: {foodDetail.calories} kcal</p>
+                    <p className="mb-1">탄수화물: {foodDetail.carbohydrate} g</p>
+                    <p className="mb-1">단백질: {foodDetail.protein} g</p>
+                    <p className="mb-3">지방: {foodDetail.fat} g</p>
+                    
+                </div>
+            ))}
+        </div>
+    </>
+);
+};
 
   const useInitializeMealTypes = (userUuid) => {
     useEffect(() => {
@@ -360,11 +552,12 @@ function Search() {
 };
 
 
+
   const handleSaveFood = async (updatedFoodData) => {
     //const dietUuid = dietUuids[updatedFoodData.mealType];
     const dietUuid = localStorage.getItem(`${updatedFoodData.mealType}Uuid`);
     const foodUuid = updatedFoodData.foodUuid; // 음식의 uuid를 가져옵니다.
-  
+    console.log("updatedFoodData: ",updatedFoodData);
     if (editedMealIndex !== null) {
       const deletingDietUuid = updatedFoodData.dietfoodUuid;
       // 기존 식단 항목을 업데이트하는 경우
@@ -381,7 +574,7 @@ function Search() {
           dietUuid: dietUuid,
           foodName: updatedFoodData.foodName,
           quantity: updatedFoodData.multiplier,
-          notes: ""
+          notes: `${updatedFoodData.foodName}, ${updatedFoodData.servingUnit || 100}, ${updatedFoodData.energy}, ${updatedFoodData.carbs}, ${updatedFoodData.protein}, ${updatedFoodData.fat}`
         });
         console.log('Food logged:', response.data);
 
@@ -404,7 +597,12 @@ function Search() {
       }
       } catch (error) {
         // Handle the error if the POST request fails
-        console.error('Failed to log food:', error);
+        // console.error('Failed to log food:', error);
+        console.error('memberUuid:', userUuid,
+          'foodUuid:', foodUuid,
+          'dietUuid:', dietUuid,
+          'foodName:', updatedFoodData.foodName,
+          'quantity:', updatedFoodData.multiplier);
       }
       try {
         console.log(`식사 딜리트 fooddietUuid: `, deletingDietUuid);
@@ -424,7 +622,7 @@ function Search() {
           foodUuid: foodUuid,
           dietUuid: dietUuid,
           quantity: updatedFoodData.multiplier,
-          notes: ""
+          notes: `${updatedFoodData.foodName}, ${updatedFoodData.servingUnit || 100}, ${updatedFoodData.energy}, ${updatedFoodData.carbs}, ${updatedFoodData.protein}, ${updatedFoodData.fat}`
         });
         console.log('Food logged:', response.data);
         updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
@@ -451,6 +649,7 @@ function Search() {
     setIsPopupOpen(false);
     setIsNewPopupOpen(false);
     setEditedMealIndex(null);
+    ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
   };
 
 
@@ -486,13 +685,14 @@ function Search() {
   
     
     console.log(`식사 유형 ${newUpdatedFoodData.mealType}에 대한 post dietUuid: `, dietUuid, `음식 uuid: `, foodUuid);
+    console.log(newUpdatedFoodData);
     try {
       const dietResponse = await axios.post("http://localhost:8080/api/v1/dietfoods/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
         foodUuid: foodUuid,
         dietUuid: dietUuid,
         quantity: newUpdatedFoodData.multiplier,
-        foodName: foodData.foodName,
-        notes: ""
+        foodName: newUpdatedFoodData.foodName,
+        notes: `${newUpdatedFoodData.foodName}, ${newUpdatedFoodData.servingUnit || 100}, ${newUpdatedFoodData.energy}, ${newUpdatedFoodData.carbs}, ${newUpdatedFoodData.protein}, ${newUpdatedFoodData.fat}`
       });
       console.log('Food logged:', dietResponse.data);
       //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
@@ -522,6 +722,7 @@ function Search() {
     setIsPopupOpen(false);
     setIsNewPopupOpen(false);
     setEditedMealIndex(null);
+    ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].forEach(fetchDietData);
   };
   /*
   const handleSaveFood = async (updatedFoodData) => {
@@ -672,6 +873,7 @@ function Search() {
       console.error(`Failed to delete the search with UUID: ${foodUuid}`, error);
     }
     setIsPopupOpen(false);
+    setIsNewPopupOpen(false);
   };
 
   return (
@@ -684,9 +886,9 @@ function Search() {
         className="bg-gray-100 bg-opacity-50 border border-gray-300 focus:border-[#88d1f9] focus:bg-white text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
       />
       <button onClick={() => handleSearch(searchTerm)}
-      className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">검색</button>
+      className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">검색</button>
       <button onClick={() => handleMake(searchTerm)}
-      className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">사용자 지정 추가</button>
+      className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5">사용자 지정 추가</button>
 {/*
       <div className="related-searches-container">
         <h2>연관 검색어</h2>
@@ -712,7 +914,9 @@ function Search() {
                   {search.foodName}
                   {/* 사용자가 지정한 검색어일 경우에만 삭제 버튼을 렌더링 */}
                   {search.isUserDefined && (
-                    <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteSearch(search.foodUuid)}>삭제</button>
+                    <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" 
+                    onClick={() => handleDeleteSearch(search.foodUuid)}
+                    >삭제</button>
                   )}
                 </div>
               ))}
@@ -781,14 +985,14 @@ function Search() {
       {/* 오늘의 식단 목록 */}
       <div>
         <h2>오늘의 식단</h2>
-        <div className="meals-grid">
+        {/* <div className="meals-grid">
           {todaysMeals
             .filter((meal) => selectedMealType === 'all' || meal.mealType === selectedMealType)
             .map((meal, index) => (
               <div key={meal.id || index} className="meal-item">
                 <div className="buttons">
-                <button className="btn btn-danger inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteFood(index)}>삭제</button>
-                <button className="inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleEditClick(index)}>편집</button>
+                <button className="btn btn-danger inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleDeleteFood(index)}>삭제</button>
+                <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={() => handleEditClick(index)}>편집</button>
                 </div>
                 <div>식품명: {meal.foodName}</div>
                 <div>양: {(meal.amount * meal.multiplier).toFixed(2)}g</div>
@@ -798,9 +1002,31 @@ function Search() {
                 <div>단백질: {(meal.protein * 1).toFixed(2)}g</div>
               </div>
             ))}
+        </div> */}
+        <div className="styles.lists-section">
+          {selectedMealType === 'all' ? (
+            ['MORNING', 'LUNCH', 'DINNER', 'SNACK'].flatMap((type) =>
+              allRecords[type].map((record, index) => (
+                <DietRecord key={index} record={record} />
+              ))
+            )
+          ) : (
+            allRecords[selectedMealType].map((record, index) => (
+              <DietRecord key={index} record={record} />
+            ))
+          )}
         </div>
-      </div>
 
+
+        {/* <div className="lists-section">
+          {records.map((record, index) => (
+            <DietRecord key={index} record={record} />
+          ))}
+        </div> */}
+
+      </div>
+      
+          
     </div>
     </section>
   );
