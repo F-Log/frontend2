@@ -11,9 +11,6 @@ function Setting() {
   const [exerciseIntensity, setExerciseIntensity] = useState(''); // {"LIGHT", "MEDIUM", "HARD"}
   const [exerciseGoal, setExerciseGoal] = useState(''); // "LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"
   const [allergy, setAllergy] = useState(''); // "LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"
-  //const [inbodyAlert, setInbodyAlert] = useState('활성화');
-  //const [inbodyAlertPeriod, setInbodyAlertPeriod] = useState('1달');
-  //const [customPeriod, setCustomPeriod] = useState('');
   const userUuid = localStorage.getItem("userUuid");
   const [allergyDeleted, setAllergyDeleted] = useState('');
 
