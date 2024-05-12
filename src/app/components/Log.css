@@ -21,13 +21,14 @@
     background-color: #eee;
     position: relative;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: left;
   }
   
   .nutrition-bar-fill {
     height: 100%;
     background-color: blue;
     position: absolute;
+    left: 0;
   }
   
   .nutrition-bar-overflow {

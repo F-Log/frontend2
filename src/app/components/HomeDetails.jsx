@@ -4,7 +4,7 @@ import './HomeDetails.css';
 import axios from 'axios';
 import { useUser } from './FoodContext';
 
-const NutritionBar = ({ label, percentage }) => {
+const NutritionBar = ({ label, percentage, label2 }) => {
   const barBackground = percentage > 100 ? '#FF8E8E' : 'grey';
   const barFill = percentage > 100 ? '#6B8BFF' : '#6B8BFF';
   const barFillWidth = percentage > 100 ? '100%' : `${percentage}%`;
@@ -19,7 +19,7 @@ const NutritionBar = ({ label, percentage }) => {
           <div className="nutrition-bar-overflow" style={{ width: barOverflowWidth, backgroundColor: barBackground }}></div>
         )}
       </div>
-      <span className="nutrition-bar-percentage">{percentage}%</span>
+      <div className="nutrition-bar-label">{label2}</div>
     </div>
   );
 };
@@ -34,7 +34,7 @@ function DietDetailPage() {
   const [advice, setAdvice] = useState('');
   const userUuid = localStorage.getItem("userUuid");
   const [recommendations, setRecommendations] = useState([]);
-  const mealDate = new Date().toISOString().split('T')[0];
+  const mealDate = localStorage.getItem("selectedDate") ? localStorage.getItem("selectedDate") : new Date().toISOString().split('T')[0];
   const [dailyFeedback, setDailyFeedback] = useState({});
   const [energy, setEnergy] = useState(0);
   const [carbs, setCarbs] = useState(0);
@@ -294,16 +294,19 @@ function DietDetailPage() {
         <div className="ai-advice-header">
           <h2>영양성분 개요</h2>
         </div>
+        <div className="calories-bars">
+          <NutritionBar label={`| 칼로리 `} percentage={(energy / maxEntryCalories * 100).toFixed(1)} label2={`${(energy * 1).toFixed(1)} / ${maxEntryCalories}`} />
+        </div>
+        
         <div className="nutrition-bars">
-          
-          
-          <NutritionBar label={`| 칼로리 ${(energy * 1).toFixed(1)} / ${maxEntryCalories}`} percentage={(energy / maxEntryCalories * 100).toFixed(1)} />
-          
-          <NutritionBar label={`| 탄수화물 ${(carbs * 1).toFixed(1)} / ${maxEntry}`} percentage={(carbs / maxEntry * 100).toFixed(1)} />
-          
-          <NutritionBar label={`| 단백질 ${(protein * 1).toFixed(1)} / ${maxEntry}`} percentage={(protein / maxEntry * 100).toFixed(1)} />
-          
-          <NutritionBar label={`| 지방 ${(fat * 1).toFixed(1)} / ${maxEntry}`} percentage={(fat / maxEntry * 100).toFixed(1)} />
+            
+            
+              
+              <NutritionBar label={`| 탄수화물 `} percentage={(carbs / maxEntry * 100).toFixed(1)} label2={`${(carbs * 1).toFixed(1)} / ${maxEntry}`} />
+              
+              <NutritionBar label={`| 단백질 `} percentage={(protein / maxEntry * 100).toFixed(1)} label2={`${(protein * 1).toFixed(1)} / ${maxEntry}`}/>
+              
+              <NutritionBar label={`| 지방 `} percentage={(fat / maxEntry * 100).toFixed(1)} label2={`${(fat * 1).toFixed(1)} / ${maxEntry}`}/>
         </div>
       </div>
 

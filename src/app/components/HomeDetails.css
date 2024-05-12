@@ -99,28 +99,36 @@
     font-weight: bold;
     margin-right: 10px;
   }
-  .nutrition-bars {
+  .calories-bars {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2개의 컬럼을 동일한 크기로 설정 */
+    grid-template-columns: repeat(1, 1fr); /* 2개의 컬럼을 동일한 크기로 설정 */
     gap: 20px; /* grid 아이템 사이의 간격 설정 */
     margin-bottom: 20px; /* grid 아래쪽 여백 추가 */
+    width: 80%;
+  }
+  .nutrition-bars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 2개의 컬럼을 동일한 크기로 설정 */
+    gap: 40px; /* grid 아이템 사이의 간격 설정 */
+    margin-bottom: 20px; /* grid 아래쪽 여백 추가 */
+    width: 80%;
   }
   .nutrition-bar {
     align-items: left;
     border-radius: 25px;
     height: 30px;
-    width: 70%;
+    width: 100%;
     background-color: #eee;
-    position: relative;
+    /* position: relative; */
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: left;
     overflow: hidden;
     border: 2.5px solid black;
   }
   
   .nutrition-bar-fill {
     border-radius: 25px;
-    height: 100%;
+    /* height: 100%; */
     background-color: blue;
     position: absolute;
   }

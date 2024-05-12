@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './CalanderUI.module.css';
 const Calendar = ({ onDateSelect }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -48,9 +49,13 @@ const Calendar = ({ onDateSelect }) => {
   return (
     <div className="calendar">
       <div className="calendar-nav">
-        <button onClick={handlePrevMonth}>&lt;</button>
         <span>{monthsOfYear[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
+        <span>
+        <button className="arrowbtn" onClick={handlePrevMonth}>&lt;</button>
+        
         <button onClick={handleNextMonth}>&gt;</button>
+        </span>
+        
       </div>
       <div className="calendar-weekdays">
         {daysOfWeek.map((day) => (
