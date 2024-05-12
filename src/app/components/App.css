@@ -299,6 +299,29 @@
   z-index: 1000;
   width: 700px;
 }
+.popup {
+  display: flex;
+  justify-content: space-between;
+  padding: 50px;
+  /* margin-top: 10px;
+  margin-bottom: 10px; */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 750px;
+}
+
+.popup > button{
+  margin: 100px;
+}
 
 .input-group label {
   display: inline-flex;
@@ -553,10 +576,11 @@ input[type="range"] {
 .calendar-nav button {
   padding: 5px 10px;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
+  background-color: #ffffff;
+  color: black;
   border: none;
   border-radius: 5px;
+  margin-left: 10px;
 }
 
 .calendar-nav span {
@@ -616,12 +640,12 @@ input[type="range"] {
   margin-bottom: 20px;
 }
 
-.calendar-nav button {
+/* .calendar-nav button {
   background: none;
   border: none;
   cursor: pointer;
   font-size: large;
-}
+} */
 
 .calendar-weekdays, .calendar-dates {
   display: grid;
