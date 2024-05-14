@@ -42,6 +42,8 @@ function DietDetailPage() {
   const [fat, setFat] = useState(0);
   const [maxEntryCalories, setMaxEntryCalories] = useState(5000);
   const [maxEntry, setMaxEntry] = useState(500);
+  const dietUuid = records[0].dietUuid;
+  console.log('dietUuid:', dietUuid);
   const [data, setData] = useState({
     inbodyUuid: '',
     memberUuid: localStorage.getItem("userUuid") || '',
@@ -127,13 +129,13 @@ function DietDetailPage() {
       
     } else {
       try {
-        const dietUuid = localStorage.getItem(`${foodData}Uuid`);
+        
         console.log(foodData, 'dietUuid:', dietUuid);
         const response = await axios.post("http://localhost:8080/api/v1/gpt/diet-feedback", {
           dietUuid: dietUuid || localStorage.getItem(`MORNINGUuid`) ,
           memberUuid: userUuid
         });
-        console.log(foodData.mealType, 'diet feedback:', response.data);
+        console.log('diet feedback:', response.data);
         setDailyFeedback(response.data.content);
         setAdvice(response.data.content);
       } catch (error) {
@@ -314,11 +316,11 @@ function DietDetailPage() {
             
       <div className="ai-advice-section">
                 <div className="ai-advice-header">
-                    <h2>인바디 피드백</h2>
-                    <button onClick={handleGenerateAdvice('diet')} className="generate-advice-btn">생성</button>
+                    <h2>식단 피드백</h2>
+                    <button onClick={() => handleGenerateAdvice('diet')} className="generate-advice-btn">생성</button>
                 </div>
                 <textarea 
-                    
+                    value={advice}
                     readOnly={true}
                     className="ai-advice-textarea"
                 ></textarea>

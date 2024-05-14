@@ -96,7 +96,7 @@ const saveSettings = async () => {
       console.log('Settings deleted:', deleteResponse.data);
     } catch (deleteError) {
       console.error('Failed to delete allergy settings:', deleteError.response ? deleteError.response.data : deleteError);
-      alert("삭제 실패: " + (deleteError.response?.data?.message || "서버 오류"));
+      // alert("삭제 실패: " + (deleteError.response?.data?.message || "서버 오류"));
     }
     // alert("설정이 저장되었습니다!");
   } catch (putError) {
