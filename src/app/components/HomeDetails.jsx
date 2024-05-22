@@ -224,24 +224,25 @@ function DietDetailPage() {
 
   return (
     <>
-        <div className="diet-record">
-            {foodDetails.map((foodDetail, index) => (
-                <div
-                    key={index}
-                    className="a-record-details p-4 mb-4 bg-gray-100 rounded-lg shadow"
-                    
-                >
-                    <p className="aadetails" onClick={() => deleteHandler(foodDetail.dietfoodUuid, index)}><u>삭제</u></p>
-                    <h4 className="font-semibold text-lg mb-2">{foodDetail.foodName}</h4>
-                    <p className="mb-1">칼로리: {foodDetail.calories} kcal</p>
-                    <p className="mb-1">탄수화물: {foodDetail.carbohydrate} g</p>
-                    <p className="mb-1">단백질: {foodDetail.protein} g</p>
-                    <p className="mb-3">지방: {foodDetail.fat} g</p>
-                    
-                </div>
-            ))}
-        </div>
+      <div className="diet-record">
+        {foodDetails.map((foodDetail, index) => (
+          foodDetail.foodName && (
+            <div
+              key={index}
+              className="a-record-details p-4 mb-4 bg-gray-100 rounded-lg shadow"
+            >
+              <p className="aadetails" onClick={() => deleteHandler(foodDetail.dietfoodUuid, index)}><u>삭제</u></p>
+              <h4 className="font-semibold text-lg mb-2">{foodDetail.foodName}</h4>
+              <p className="mb-1">칼로리: {foodDetail.calories} kcal</p>
+              <p className="mb-1">탄수화물: {foodDetail.carbohydrate} g</p>
+              <p className="mb-1">단백질: {foodDetail.protein} g</p>
+              <p className="mb-3">지방: {foodDetail.fat} g</p>
+            </div>
+          )
+        ))}
+      </div>
     </>
+
 );
 };
 
