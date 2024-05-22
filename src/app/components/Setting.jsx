@@ -14,7 +14,21 @@ function Setting() {
   const userUuid = localStorage.getItem("userUuid");
   const [allergyDeleted, setAllergyDeleted] = useState('');
 
-  const isSelected = (buttonName, state) => state === buttonName;
+  const isSelected = (goal, current) => goal === current;
+
+  const intensityMap = {
+    LIGHT: '약',
+    MEDIUM: '중',
+    HARD: '강',
+  };
+
+  const goalMap = {
+    LOSE_WEIGHT: '체중 감량',
+    MAINTAIN_WEIGHT: '체중 유지',
+    GAIN_WEIGHT: '체중 증량',
+    GAIN_MUSCLE: '근육량 증가',
+  };
+
   const settingsData = {
     exerciseType: exerciseType,
     targetWeight: Number(targetWeight),
@@ -158,31 +172,31 @@ const saveSettings = async () => {
       />
     </div>
     <div>운동 강도</div>
-    {/* 운동 강도 섹션 */}
-    <div className="exercise-intensity">
-      {["LIGHT", "MEDIUM", "HARD"].map((goal) => (
-        <button
-          key={goal}
-          onClick={() => setExerciseIntensity(goal)}
-          className={isSelected(goal, exerciseIntensity) ? 'selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5' : 'inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-black mt-0 px-5 mr-5'}
-        >
-        {goal}
-        </button>
-      ))}
-    </div>
-    <div>운동 목표</div>
-    {/* 운동 목표 섹션 */}
-    <div className="button-group">
-      {["LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"].map((goal) => (
-        <button
-          key={goal}
-          onClick={() => setExerciseGoal(goal)}
-          className={isSelected(goal, exerciseGoal) ? 'selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5' : 'inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-black mt-0 px-5 mr-5'}
-        >
-        {goal}
-        </button>
-      ))}
-    </div>
+      {/* 운동 강도 섹션 */}
+      <div className="exercise-intensity">
+        {["LIGHT", "MEDIUM", "HARD"].map((goal) => (
+          <button
+            key={goal}
+            onClick={() => setExerciseIntensity(goal)}
+            className={isSelected(goal, exerciseIntensity) ? 'selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5' : 'inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-black mt-0 px-5 mr-5'}
+          >
+            {intensityMap[goal]}
+          </button>
+        ))}
+      </div>
+      <div>운동 목표</div>
+      {/* 운동 목표 섹션 */}
+      <div className="exercise-intensity">
+        {["LOSE_WEIGHT", "MAINTAIN_WEIGHT", "GAIN_WEIGHT", "GAIN_MUSCLE"].map((goal) => (
+          <button
+            key={goal}
+            onClick={() => setExerciseGoal(goal)}
+            className={isSelected(goal, exerciseGoal) ? 'selected inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5' : 'inline-flex items-center bg-[#88d1f9] border-0 py-1 rounded-2xl focus:outline-none rounded text-black mt-0 px-5 mr-5'}
+          >
+            {goalMap[goal]}
+          </button>
+        ))}
+      </div>
     {/*
     <div>인바디 알림</div>
       <div className="inbody-alert">

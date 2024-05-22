@@ -27,8 +27,8 @@
   .settings button,
   .settings .save-btn,
   .settings .cancel-btn {
-    width: 200px; 
-    background-color: #88d1f9;
+    /* width: 150px;  */
+    background-color: #3B7666;
     color: #fff;
     border-radius: 0.5rem;
     padding: 0.5rem;
@@ -38,22 +38,22 @@
   
   .settings button:not(.selected) {
     background-color: #fff;
-    color: #88d1f9;
+    color: #3B7666;
   }
   
   .settings .selected {
-    background-color: #88d1f9;
+    background-color: #3B7666;
     color: #fff;
   }
   
   .settings .cancel-btn {
     background-color: #fff;
     color: #88d1f9;
-    border: 1px solid #88d1f9;
+    border: 1px solid #3B7666;
   }
   
   .settings .change-pw-link {
-    color: #88d1f9;
+    color: #3B7666;
     cursor: pointer;
     text-decoration: underline;
   }
@@ -100,25 +100,25 @@
   
   /* Ensure that the save and cancel buttons are not inheriting unwanted styles */
   .settings .save-btn {
-    background-color: #27a9e0 !important;
+    background-color: #3B7666 !important;
     color: white !important;
     border: none !important;
     padding: 10px 20px;
   }
 
   .settings .cancel-btn {
-    background-color: #88dbff !important; 
+    background-color: #3B7666 !important; 
     color: white !important;
     border: none !important;
     padding: 10px 20px;
   }
   
   .settings .save-btn:hover {
-    background-color: #1a87c5 !important; /* Darker blue on hover */
+    background-color: #3B7666 !important; /* Darker blue on hover */
   }
 
   .settings .cancel-btn:hover {
-    background-color: #1a87c5 !important; /* Darker blue on hover */
+    background-color: #3B7666 !important; /* Darker blue on hover */
   }
   
   /* Make sure the delete account button has the right styling */
