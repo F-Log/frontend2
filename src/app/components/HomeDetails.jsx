@@ -41,7 +41,10 @@ function DietDetailPage() {
   const [protein, setProtein] = useState(0);
   const [fat, setFat] = useState(0);
   const [maxEntryCalories, setMaxEntryCalories] = useState(5000);
-  const [maxEntry, setMaxEntry] = useState(500);
+  const [maxEntryCarbs, setMaxEntryCarbs] = useState(500);
+  const [maxEntryProtein, setMaxEntryProtein] = useState(500);
+  const [maxEntryFat, setMaxEntryFat] = useState(500);
+  const [activeMetabolism, setActiveMetabolism] = useState(0);
   const dietUuid = records[0].dietUuid;
   console.log('dietUuid:', dietUuid);
   const [data, setData] = useState({
@@ -72,6 +75,62 @@ function DietDetailPage() {
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+  const getMaxEntryCalories = async () => {
+    
+    try {
+      const inbodyResponse = await axios.get(`http://localhost:8080/api/v1/inbody/latest/${userUuid}`, {});
+      const basalMetabolicRate = inbodyResponse.data.basalMetabolicRate;
+      console.log('Inbody data:', basalMetabolicRate);
+      if(basalMetabolicRate){
+        try {
+        const exercisesResponse = await axios.get(`http://localhost:8080/api/v1/exercises/${userUuid}`, {});
+        const exercisesData = exercisesResponse.data;
+        console.log('Exercises data:', exercisesData);
+        if(exercisesData.exercisePurpose){
+          if(exercisesData.exerciseFrequency < 2){
+            setActiveMetabolism(basalMetabolicRate * 0.2);
+          } else if(exercisesData.exerciseFrequency < 4){
+            setActiveMetabolism(basalMetabolicRate * 0.3);
+          } else if(exercisesData.exerciseFrequency < 6){
+            setActiveMetabolism(basalMetabolicRate * 0.5);
+          } else {
+            setActiveMetabolism(basalMetabolicRate * 0.7);
+          }
+          const digestiveMetabolism = (basalMetabolicRate + activeMetabolism) * 0.1;
+          let maxCalories = 0;
+            if (exercisesData.exercisePurpose === 'WEIGHT_LOSS') {
+              maxCalories = (basalMetabolicRate + activeMetabolism + digestiveMetabolism) * 0.8;
+            } else if (exercisesData.exercisePurpose === 'MAINTAIN_WEIGHT') {
+              maxCalories = (basalMetabolicRate + activeMetabolism + digestiveMetabolism);
+            } else if (exercisesData.exercisePurpose === 'MUSCLE_GAIN') {
+              maxCalories = (basalMetabolicRate + activeMetabolism + digestiveMetabolism) + 500;
+            } else { // GAIN_WEIGHT
+              maxCalories = (basalMetabolicRate + activeMetabolism + digestiveMetabolism) * 1.2;
+            }
+            setMaxEntryCalories(maxCalories.toFixed(2));
+
+          const carbCalories = maxCalories * 0.4;
+          const proteinCalories = maxCalories * 0.4;
+          const fatCalories = maxCalories * 0.2;
+
+          const carbsGrams = (carbCalories / 4).toFixed(2); // 1g carbohydrate = 4 kcal
+          const proteinGrams = (proteinCalories / 4).toFixed(2); // 1g protein = 4 kcal
+          const fatGrams = (fatCalories / 9).toFixed(2); // 1g fat = 9 kcal
+
+          setMaxEntryCarbs(carbsGrams);
+          setMaxEntryProtein(proteinGrams);
+          setMaxEntryFat(fatGrams);
+
+        }
+      } catch (error) {
+        console.error('Error fetching max entry:', error.response ? error.response.data : error.message);
+      }
+    }
+    } catch (error) {
+      console.error('Error fetching max entry:', error.response ? error.response.data : error.message);
+    }
+    
+  };
   const fetchEnergys = async () => {
     setEnergy(records[0].totalCalories || 0);
     setCarbs(records[0].totalCarbs || 0);
@@ -80,6 +139,7 @@ function DietDetailPage() {
   };
   useEffect(() => {
     fetchEnergys();
+    getMaxEntryCalories();
   }, []);
   function getFormattedDateAndMealType(record) {
     const { mealDate, mealType } = record;
@@ -188,23 +248,33 @@ function DietDetailPage() {
           // 첫 번째 API 호출을 모두 수행
           const promises = dietFoods.map(async (dietFood) => {
               try {
-                  const dietFoodResponse = await axios.get(`http://localhost:8080/api/v1/dietfoods/${dietFood.dietfoodUuid}`);
-                  console.log('3식품 정보를 가져옵니다:', dietFoodResponse.data);
-                  
-                  // 두 번째 API 호출
-                  const foodResponse = await axios.get(`http://localhost:8080/api/v1/food/${dietFoodResponse.data.foodUuid}`);
-                  console.log('4식품 정보를 가져옵니다:', foodResponse.data);
-  
-                  // 음식 정보와 계산된 값들을 객체로 반환
-                  return {
-                      ...dietFood,
-                      dietFoodUuid: dietFoodResponse.data.dietfoodUuid,
-                      foodName: foodResponse.data.foodName,
-                      calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
-                      carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
-                      protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
-                      fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
-                  };
+                const dietFoodResponse = await axios.get(`http://localhost:8080/api/v1/dietfoods/${dietFood.dietfoodUuid}`);
+                console.log('3식품 정보를 가져옵니다:', dietFoodResponse.data);
+                const notes = dietFoodResponse.data.notes;
+                const [foodName, amount, calories, carbohydrate, protein, fat] = notes.split(', ').map(item => item.trim());
+
+                // 두 번째 API 호출
+                // const foodResponse = await axios.get(`http://localhost:8080/api/v1/food/${dietFoodResponse.data.foodUuid}`);
+                // console.log('4식품 정보를 가져옵니다:', foodResponse.data);
+
+                // 음식 정보와 계산된 값들을 객체로 반환
+                return {
+                    ...dietFood,
+                    dietFoodUuid: dietFoodResponse.data.dietfoodUuid,
+                    foodUuid: dietFoodResponse.data.foodUuid,
+                    // foodName: foodResponse.data.foodName,
+                    // amount: foodResponse.data.servingUnit || 100,
+                    // calories: (foodResponse.data.calories * dietFood.quantity).toFixed(2),
+                    // carbohydrate: (foodResponse.data.carbohydrate * dietFood.quantity).toFixed(2),
+                    // protein: (foodResponse.data.protein * dietFood.quantity).toFixed(2),
+                    // fat: (foodResponse.data.fat * dietFood.quantity).toFixed(2)
+                    foodName: foodName,
+                    amount: amount || 100,
+                    calories: (parseFloat(calories) * dietFood.quantity).toFixed(2),
+                    carbohydrate: (parseFloat(carbohydrate) * dietFood.quantity).toFixed(2),
+                    protein: (parseFloat(protein) * dietFood.quantity).toFixed(2),
+                    fat: (parseFloat(fat) * dietFood.quantity).toFixed(2)
+                };
               } catch (error) {
                   console.error('API 호출 중 에러 발생:', error);
                   return {};  // 실패 시 빈 객체 반환
@@ -305,11 +375,11 @@ function DietDetailPage() {
             
             
               
-              <NutritionBar label={`| 탄수화물 `} percentage={(carbs / maxEntry * 100).toFixed(1)} label2={`${(carbs * 1).toFixed(1)} / ${maxEntry}`} />
+              <NutritionBar label={`| 탄수화물 `} percentage={(carbs / maxEntryCarbs * 100).toFixed(1)} label2={`${(carbs * 1).toFixed(1)} / ${maxEntryCarbs}`} />
               
-              <NutritionBar label={`| 단백질 `} percentage={(protein / maxEntry * 100).toFixed(1)} label2={`${(protein * 1).toFixed(1)} / ${maxEntry}`}/>
+              <NutritionBar label={`| 단백질 `} percentage={(protein / maxEntryProtein * 100).toFixed(1)} label2={`${(protein * 1).toFixed(1)} / ${maxEntryProtein}`}/>
               
-              <NutritionBar label={`| 지방 `} percentage={(fat / maxEntry * 100).toFixed(1)} label2={`${(fat * 1).toFixed(1)} / ${maxEntry}`}/>
+              <NutritionBar label={`| 지방 `} percentage={(fat / maxEntryFat * 100).toFixed(1)} label2={`${(fat * 1).toFixed(1)} / ${maxEntryFat}`}/>
         </div>
       </div>
 

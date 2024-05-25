@@ -42,6 +42,9 @@ function Setting() {
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/exercises/${userUuid}`);
         const data = response.data;
+        if( data.exerciseFrequency){
+          localStorage.setItem("frequency", data.exerciseFrequency);
+        }
         // Update your state with the fetched data
         setExerciseType(data.exerciseType);
         setTargetWeight(data.targetWeight.toString()); // Assuming targetWeight is a number
