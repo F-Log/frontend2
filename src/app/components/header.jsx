@@ -44,7 +44,7 @@ function Header() {
               <a href="#">인바디</a>
               <ul className="submenu">
                 <li><a href="#" onClick={() => handleNavigation('/inbodyOcr')}>인바디 OCR</a></li>
-                <li><a href="#">인바디 그래프</a></li>
+                <li><a href="#" onClick={() => handleNavigation('/graph')}>인바디 그래프</a></li>
               </ul>
             </li>
             <li className="lists">

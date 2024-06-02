@@ -21,6 +21,7 @@ import UpdatePass from './updatepass';
 import InbodyOcr from './inbodyOcr';
 import FoodOcr from './foodOcr';
 import HomeDetails from './HomeDetails';
+import Graph from './Graph';
 
 
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/update-password" element={<UpdatePass />} /> 
           <Route path="/inbody" element={<InBody />} />
+          <Route path="/graph" element={<Graph />} />
         </Routes>
         </section>
       </div>
