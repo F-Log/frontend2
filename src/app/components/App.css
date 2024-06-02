@@ -20,7 +20,7 @@
   button {
     color: #88d1f9;
     background-color: white;
-    border: none;
+    /* border: none; */
     cursor: pointer;
   }
   
