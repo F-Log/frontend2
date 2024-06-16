@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './HomeDetails.css';
 import axios from 'axios';
 import { useUser } from './FoodContext';
+import inputOcr from './img/inputOcr.png';
 
 const NutritionBar = ({ label, percentage, label2 }) => {
   const barBackground = percentage > 100 ? '#FF8E8E' : 'grey';
@@ -45,6 +46,7 @@ function DietDetailPage() {
   const [maxEntryProtein, setMaxEntryProtein] = useState(500);
   const [maxEntryFat, setMaxEntryFat] = useState(500);
   const [activeMetabolism, setActiveMetabolism] = useState(0);
+  const [image, setImage] = useState(inputOcr);
   const dietUuid = records[0].dietUuid;
   console.log('dietUuid:', dietUuid);
   const [data, setData] = useState({
@@ -141,6 +143,14 @@ function DietDetailPage() {
     fetchEnergys();
     getMaxEntryCalories();
   }, []);
+
+  useEffect(() => {
+    const savedImage = localStorage.getItem(`${dietUuid}Image`);
+    if (savedImage) {
+      setImage(savedImage);
+    }
+  }, [dietUuid]);
+
   function getFormattedDateAndMealType(record) {
     const { mealDate, mealType } = record;
     const date = new Date(mealDate);
@@ -209,6 +219,20 @@ function DietDetailPage() {
     dailyFeedback : 
     '일주일의 피드백입니다.');*/
   };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target.result;
+        setImage(imageUrl);
+        localStorage.setItem(`${dietUuid}Image`, imageUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const DietRecord = ({ record }) => {
     const [foodDetails, setFoodDetails] = useState([]);
     const {dietFoods} = record;
@@ -345,6 +369,19 @@ function DietDetailPage() {
       <div className="center-text">
         <p>{formattedDateAndMealType}</p>
       </div>
+
+      <div className="image-upload-section">
+        <input
+          id={`${dietUuid}Picture`}
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{ display: 'none' }}
+        />
+        {/* 이미지를 클릭하면 파일 선택 다이얼로그가 나타나도록 설정 */}
+        <img src={image} alt="식품성분표 업로드" className="upload-image" onClick={() => document.getElementById(`${dietUuid}Picture`).click()} />
+      </div>
+
       <div className="buttons-section">
         {/* <button onClick={() => navigate('/FoodOcr')} className="button">영양성분표 업로드</button>
         
