@@ -49,6 +49,7 @@ function DietDetailPage() {
   const [image, setImage] = useState(inputOcr);
   const dietUuid = records[0].dietUuid;
   console.log('dietUuid:', dietUuid);
+  console.log('records[0]', records[0]);
   const [data, setData] = useState({
     inbodyUuid: '',
     memberUuid: localStorage.getItem("userUuid") || '',
@@ -135,7 +136,7 @@ function DietDetailPage() {
   };
   const fetchEnergys = async () => {
     setEnergy(records[0].totalCalories || 0);
-    setCarbs(records[0].totalCarbs || 0);
+    setCarbs(records[0].totalCarbohydrate || 0);
     setProtein(records[0].totalProtein || 0);
     setFat(records[0].totalFat || 0);
   };
@@ -145,12 +146,26 @@ function DietDetailPage() {
   }, []);
 
   useEffect(() => {
-    const savedImage = localStorage.getItem(`${dietUuid}Image`);
-    if (savedImage) {
-      setImage(savedImage);
-    }
-  }, [dietUuid]);
+    const fetchImage = async () => {
+      const savedImage = localStorage.getItem(`${dietUuid}Image`);
+      if (savedImage) {
+        setImage(savedImage);
+      }
 
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/diet/${dietUuid}`);
+        console.log('debug response:', response);
+
+        if (response.data.s3Url) {
+          setImage(response.data.s3Url);
+        }
+      } catch (error) {
+        console.error('식단 정보를 가져오는 데 실패했습니다.', error);
+      }
+    };
+
+    fetchImage();
+  }, [dietUuid]);
   function getFormattedDateAndMealType(record) {
     const { mealDate, mealType } = record;
     const date = new Date(mealDate);
@@ -220,14 +235,38 @@ function DietDetailPage() {
     '일주일의 피드백입니다.');*/
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         const imageUrl = event.target.result;
-        setImage(imageUrl);
-        localStorage.setItem(`${dietUuid}Image`, imageUrl);
+        // localStorage.setItem(`${dietUuid}Image`, imageUrl);
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+          const imgResponse = await axios.get(`http://localhost:8080/api/v1/diet/${dietUuid}`);
+          console.log('imgResponse:', imgResponse);
+
+          const endpoint = imgResponse.data.s3Url
+            ? `http://localhost:8080/api/v1/diet/updateImageUrl/${dietUuid}`
+            : `http://localhost:8080/api/v1/diet/imageUrl/${dietUuid}`;
+
+          const response = await axios({
+            method: imgResponse.data.s3Url ? 'PUT' : 'POST',
+            url: endpoint,
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+
+          console.log('식단 정보 업데이트 성공:', response.data);
+        } catch (error) {
+          console.error('식단 정보를 업데이트하는 데 실패했습니다.', error);
+        }
       };
       reader.readAsDataURL(file);
     }
