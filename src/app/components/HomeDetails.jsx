@@ -241,8 +241,8 @@ function DietDetailPage() {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const imageUrl = event.target.result;
-        // localStorage.setItem(`${dietUuid}Image`, imageUrl);
-
+        localStorage.setItem(`${dietUuid}Image`, imageUrl);
+        setImage(imageUrl);
         const formData = new FormData();
         formData.append('image', file);
 
