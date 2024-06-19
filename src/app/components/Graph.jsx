@@ -4,8 +4,10 @@ import { LineChart } from '@mui/x-charts/LineChart';
 
 const Graph = () => {
   const userUuid = localStorage.getItem('userUuid');
-  const [seriesData, setSeriesData] = useState([]);
-  const [xAxisData, setXAxisData] = useState([]);
+  const [seriesData1, setSeriesData1] = useState([]);
+  const [seriesData2, setSeriesData2] = useState([]);
+  const [xAxisData1, setXAxisData1] = useState([]);
+  const [xAxisData2, setXAxisData2] = useState([]);
   const [conditions, setConditions] = useState({
     bodyweight: false,
     height: false,
@@ -15,6 +17,7 @@ const Graph = () => {
     fatmass: true,
     basalmetabolicrate: false,
   });
+  const [showChart1, setShowChart1] = useState(true);
 
   const toggleCondition = (label) => {
     setConditions((prevConditions) => ({
@@ -43,27 +46,71 @@ const Graph = () => {
       });
 
       // X축 데이터 (1부터 12까지 모든 월 포함)
-      const xAxis = Array.from({ length: 12 }, (_, i) => i + 1);
+      const xAxis1 = Array.from({ length: 12 }, (_, i) => i + 1);
 
       // 7개의 데이터 시리즈를 생성하고 빈 값은 null로 채움
-      const bodyWeightSeries = { label: 'Body Weight', data: monthlyData.map(item => item ? item.bodyWeight : null) };
-      const heightSeries = { label: 'Height', data: monthlyData.map(item => item ? item.height : null) };
-      const muscleMassSeries = { label: 'Muscle Mass', data: monthlyData.map(item => item ? item.muscleMass : null) };
-      const fatFreeMassSeries = { label: 'Fat Free Mass', data: monthlyData.map(item => item ? item.fatFreeMass : null) };
-      const bodyFatPercentageSeries = { label: 'Body Fat Percentage', data: monthlyData.map(item => item ? item.bodyFatPercentage : null) };
-      const fatMassSeries = { label: 'Fat Mass', data: monthlyData.map(item => item ? item.fatMass : null) };
-      const basalMetabolicRateSeries = { label: 'Basal Metabolic Rate', data: monthlyData.map(item => item ? item.basalMetabolicRate : null) };
+      const bodyWeightSeries1 = { label: 'Body Weight', data: monthlyData.map(item => item ? (isNaN(item.bodyWeight) ? null : item.bodyWeight) : null) };
+      const heightSeries1 = { label: 'Height', data: monthlyData.map(item => item ? (isNaN(item.height) ? null : item.height) : null) };
+      const muscleMassSeries1 = { label: 'Muscle Mass', data: monthlyData.map(item => item ? (isNaN(item.muscleMass) ? null : item.muscleMass) : null) };
+      const fatFreeMassSeries1 = { label: 'Fat Free Mass', data: monthlyData.map(item => item ? (isNaN(item.fatFreeMass) ? null : item.fatFreeMass) : null) };
+      const bodyFatPercentageSeries1 = { label: 'Body Fat Percentage', data: monthlyData.map(item => item ? (isNaN(item.bodyFatPercentage) ? null : item.bodyFatPercentage) : null) };
+      const fatMassSeries1 = { label: 'Fat Mass', data: monthlyData.map(item => item ? (isNaN(item.fatMass) ? null : item.fatMass) : null) };
+      const basalMetabolicRateSeries1 = { label: 'Basal Metabolic Rate', data: monthlyData.map(item => item ? (isNaN(item.basalMetabolicRate) ? null : item.basalMetabolicRate) : null) };
 
-      setSeriesData([
-        bodyWeightSeries,
-        heightSeries,
-        muscleMassSeries,
-        fatFreeMassSeries,
-        bodyFatPercentageSeries,
-        fatMassSeries,
-        basalMetabolicRateSeries
+      // 최신 10개의 데이터 추출
+      const recentData = filteredData
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 10)
+        .reverse();
+
+      // 날짜를 그룹화하여 중복된 날짜에 인덱스를 추가
+      const dateMap = {};
+      const xAxis2 = recentData.map(item => {
+        const dateStr = new Date(item.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric' });
+        if (dateMap[dateStr]) {
+          dateMap[dateStr] += 1;
+          return `${dateStr} (${dateMap[dateStr]})`;
+        } else {
+          dateMap[dateStr] = 1;
+          return dateStr;
+        }
+      });
+
+      // 7개의 데이터 시리즈를 생성하고 빈 값은 null로 채움
+      const bodyWeightSeries2 = { label: 'Body Weight', data: recentData.map(item => item ? (isNaN(item.bodyWeight) ? null : item.bodyWeight) : null) };
+      const heightSeries2 = { label: 'Height', data: recentData.map(item => item ? (isNaN(item.height) ? null : item.height) : null) };
+      const muscleMassSeries2 = { label: 'Muscle Mass', data: recentData.map(item => item ? (isNaN(item.muscleMass) ? null : item.muscleMass) : null) };
+      const fatFreeMassSeries2 = { label: 'Fat Free Mass', data: recentData.map(item => item ? (isNaN(item.fatFreeMass) ? null : item.fatFreeMass) : null) };
+      const bodyFatPercentageSeries2 = { label: 'Body Fat Percentage', data: recentData.map(item => item ? (isNaN(item.bodyFatPercentage) ? null : item.bodyFatPercentage) : null) };
+      const fatMassSeries2 = { label: 'Fat Mass', data: recentData.map(item => item ? (isNaN(item.fatMass) ? null : item.fatMass) : null) };
+      const basalMetabolicRateSeries2 = { label: 'Basal Metabolic Rate', data: recentData.map(item => item ? (isNaN(item.basalMetabolicRate) ? null : item.basalMetabolicRate) : null) };
+
+      setSeriesData1([
+        bodyWeightSeries1,
+        heightSeries1,
+        muscleMassSeries1,
+        fatFreeMassSeries1,
+        bodyFatPercentageSeries1,
+        fatMassSeries1,
+        basalMetabolicRateSeries1
       ]);
-      setXAxisData(xAxis);
+
+      setSeriesData2([
+        bodyWeightSeries2,
+        heightSeries2,
+        muscleMassSeries2,
+        fatFreeMassSeries2,
+        bodyFatPercentageSeries2,
+        fatMassSeries2,
+        basalMetabolicRateSeries2
+      ]);
+
+      setXAxisData1(xAxis1);
+      setXAxisData2(xAxis2);
+
+      // 로그를 추가하여 데이터 확인
+      console.log('Chart 1 Data:', { seriesData1, xAxisData1 });
+      console.log('Chart 2 Data:', { seriesData2, xAxisData2 });
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -73,20 +120,33 @@ const Graph = () => {
     fetchData();
   }, [userUuid]);
 
-  const filteredSeriesData = seriesData.filter(series => conditions[series.label.replace(/\s+/g, '').toLowerCase()]);
+  const filteredSeriesData1 = seriesData1.filter(series => conditions[series.label.replace(/\s+/g, '').toLowerCase()]);
+  const filteredSeriesData2 = seriesData2.filter(series => conditions[series.label.replace(/\s+/g, '').toLowerCase()]);
 
   return (
     <section className="text-gray-600 body-font relative bg-white flex items-center justify-center">
       <div className="flex items-center">
-        <LineChart
-          series={filteredSeriesData}
-          xAxis={[{ data: xAxisData }]}
-          width={800}
-          height={600}
-          lineProps={{
-            strokeWidth: 2 // 모든 라인에 대한 기본 스트로크 두께
-          }}
-        />
+        {showChart1 ? (
+          <LineChart
+            series={filteredSeriesData1}
+            xAxis={[{ data: xAxisData1, visible: false }]}
+            width={800}
+            height={600}
+            lineProps={{
+              strokeWidth: 2 // 모든 라인에 대한 기본 스트로크 두께
+            }}
+          />
+        ) : (
+          <LineChart
+            series={filteredSeriesData2}
+            xAxis={[{ scaleType: 'point', data: xAxisData2, visible: true }]}
+            width={800}
+            height={600}
+            lineProps={{
+              strokeWidth: 2 // 모든 라인에 대한 기본 스트로크 두께
+            }}
+          />
+        )}
         <div className="flex flex-col ml-4">
           {Object.keys(conditions).map((key) => (
             <button
@@ -105,6 +165,12 @@ const Graph = () => {
               {key === 'basalmetabolicrate' && '기초대사량'}
             </button>
           ))}
+          <button
+            onClick={() => setShowChart1(!showChart1)}
+            className="py-2 px-4 mb-2 w-40 rounded border-2 bg-blue-500 text-white border-blue-500"
+          >
+            {showChart1 ? '최신 변화 추이' : '월별 최신 데이터'}
+          </button>
         </div>
       </div>
     </section>
