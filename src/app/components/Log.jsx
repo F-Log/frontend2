@@ -25,6 +25,7 @@ const NutritionBar = ({ label, percentage, label2 }) => {
 const LogPage = () => {
   const [advice, setAdvice] = useState('');
   const userUuid = localStorage.getItem("userUuid");
+  const inbodyfeedbackUuid = localStorage.getItem("inbodyfeedbackUuid");
   const [recommendations, setRecommendations] = useState([]);
   const mealDate = new Date().toISOString().split('T')[0];
   const [dailyFeedback, setDailyFeedback] = useState({});
@@ -187,21 +188,48 @@ const LogPage = () => {
         console.error('Error making daily-feedback:', error.response ? error.response.data : error.message);
       }
     } else if(type === 'inbody') {
-      try {
-        const response = await axios.post("http://localhost:8080/api/v1/gpt/inbody-feedback", 
-          `"${data.inbodyUuid}"`, // UUID 값을 문자열로 보냅니다.
-          {
-            headers: {
-              'Content-Type': 'application/json' // 서버가 JSON 형식을 요구하므로 헤더 설정에 이를 명시합니다.
+      if(!inbodyfeedbackUuid){
+        try {
+          const response = await axios.post("http://localhost:8080/api/v1/gpt/inbody-feedback", 
+            // `"${data.inbodyUuid}"`, // UUID 값을 문자열로 보냅니다.
+            {
+              // headers: {
+              //   'Content-Type': 'application/json' // 서버가 JSON 형식을 요구하므로 헤더 설정에 이를 명시합니다.
+              // }
+              inbodyUuid: data.inbodyUuid,
             }
-          }
-        );
-        console.log('Inbody feedback:', response.data);
-        setDailyFeedback(response.data.content);
-        setAdvice(response.data.content);
-      } catch (error) {
-        console.error('Error making inbody-feedback:', error.response ? error.response.data : error.message);
+          );
+        //   const response = await fetch(`http://localhost:8080/api/v1/inbody/${data.inbodyUuid}`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(updateData),
+        // });
+          console.log('Inbody feedback:', response.data);
+          setDailyFeedback(response.data.content);
+          setAdvice(response.data.content);
+        } catch (error) {
+          console.error('Error making inbody-feedback:', error.response ? error.response.data : error.message);
+        }
+      } else {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/v1/inbody-feedback/${inbodyfeedbackUuid}`, {});
+        //   const response = await fetch(`http://localhost:8080/api/v1/inbody/${data.inbodyUuid}`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(updateData),
+        // });
+          console.log('Inbody feedback:', response.data);
+          setDailyFeedback(response.data.content);
+          setAdvice(response.data.content);
+        } catch (error) {
+          console.error('Error making inbody-feedback:', error.response ? error.response.data : error.message);
+        }
       }
+      
       
       
     } else {

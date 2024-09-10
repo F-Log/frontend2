@@ -101,6 +101,9 @@ function InBody() {
             }
     
             const updatedData = await response.json();
+            const inbodyfeedbackUuid = updatedData.uuid;
+            console.log('InBody feedback UUID:', inbodyfeedbackUuid);
+            localStorage.setItem("inbodyfeedbackUuid", inbodyfeedbackUuid);
             setData({ ...data, ...updatedData }); // Update the state with the new data
             alert('변경사항이 저장되었습니다.'); // Alert the user that the changes have been saved
         } catch (error) {
@@ -133,6 +136,9 @@ function InBody() {
             }
     
             const adviceData = await response.json();
+            const inbodyfeedbackUuid = adviceData.uuid;
+            console.log('InBody feedback UUID:', inbodyfeedbackUuid);
+            localStorage.setItem("inbodyfeedbackUuid", inbodyfeedbackUuid);
             setAiAdvice(adviceData.content);
         } catch (error) {
             console.error('Error fetching AI advice:', error);

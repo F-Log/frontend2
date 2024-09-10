@@ -7,6 +7,7 @@ function Header() {
   // const [showSubMenu, setShowSubMenu] = useState(false);
   const navigate = useNavigate();
   // const { userUuid } = useUser();
+
   const handleNavigation = (path) => {
     const userUuid = localStorage.getItem('userUuid');
     if (userUuid) {
@@ -18,6 +19,7 @@ function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('userUuid');
+    localStorage.removeItem('inbodyfeedbackUuid');
     navigate('/');
   };
   return (
@@ -52,7 +54,14 @@ function Header() {
             </li>
           </ul>
         </nav>
-        <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5" onClick={handleLogout}>Log out</button>
+        
+        
+        <button
+            className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5 mr-5"
+            onClick={handleLogout}
+            >
+            {localStorage.getItem("userUuid") ? 'Log out' : 'Log in'}
+          </button>
         <button className="inline-flex items-center bg-[#3B7666] border-0 py-1 rounded-2xl focus:outline-none rounded text-white mt-0 px-5" onClick={() => handleNavigation('/setting')}>Setting</button>
       </div>
     </header>
