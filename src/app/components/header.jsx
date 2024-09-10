@@ -19,6 +19,7 @@ function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('userUuid');
+    localStorage.removeItem('inbodyfeedbackUuid');
     navigate('/');
   };
   return (

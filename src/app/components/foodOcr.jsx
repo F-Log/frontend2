@@ -1,15 +1,24 @@
 import './foodOcr.css';
 import inputOcr from './img/inputOcr.png'; // 이미지 임포트
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 
 function FoodOcr() {
+  const userUuid = localStorage.getItem("userUuid");
   const [nutritionData, setNutritionData] = useState({
     아침: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
     점심: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
     저녁: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
     간식: { 탄수화물: 0, 단백질: 0, 지방: 0, 총칼로리: 0 },
   });
+
+  const mealTypeMap = {
+    아침: "MORNING",
+    점심: "LUNCH",
+    저녁: "DINNER",
+    간식: "SNACK",
+  };
 
   const [selectedMeal, setSelectedMeal] = useState('아침');
   const [image, setImage] = useState(null);
@@ -45,6 +54,71 @@ function FoodOcr() {
   const getBarFill = (nutrientValue, nutrientType) => {
     const dailyLimits = { 탄수화물: 500, 단백질: 500, 지방: 500, 총칼로리: 5000 };
     return (nutrientValue / dailyLimits[nutrientType]) * 100 + '%';
+  };
+
+  const handleCreateFood = async (updatedFoodData) => {
+    let newUpdatedFoodData = {...updatedFoodData};
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/food/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
+        foodName: "사용자 지정 음식",
+        calories: updatedFoodData.총칼로리,
+        carbohydrate: updatedFoodData.탄수화물,
+        fat: updatedFoodData.지방,
+        protein: updatedFoodData.단백질,
+        memberUuid: userUuid
+      });
+      console.log('Food appended:', response.data);
+      //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+      newUpdatedFoodData = {
+        ...updatedFoodData,
+        foodUuid: response.data.foodUuid
+        };
+      //setTodaysMeals(prevMeals => [...prevMeals, { ...newUpdatedFoodData, id: prevMeals.length }]);
+
+      
+    } catch (error) {
+      // Handle the error if the POST request fails
+      console.error('Failed to log food:', error);
+    }
+
+    //const dietUuid = dietUuids[newUpdatedFoodData.mealType];
+    const dietUuid = localStorage.getItem(`${mealTypeMap[selectedMeal]}Uuid`);
+    const foodUuid = newUpdatedFoodData.foodUuid; // 음식의 uuid를 가져옵니다.
+  
+    
+    console.log(`식사 유형 ${newUpdatedFoodData.mealType}에 대한 post dietUuid: `, dietUuid, `음식 uuid: `, foodUuid);
+    console.log(newUpdatedFoodData);
+    try {
+      const dietResponse = await axios.post("http://localhost:8080/api/v1/dietfoods/new", { // 실제 요청 URL로 교체해야 합니다.          memberUuid: userUuid,
+        foodUuid: foodUuid,
+        dietUuid: dietUuid,
+        quantity: 1,
+        foodName: newUpdatedFoodData.foodName,
+        notes: `사용자 지정 음식, ${newUpdatedFoodData.servingUnit || 100}, ${newUpdatedFoodData.총칼로리}, ${newUpdatedFoodData.탄수화물}, ${newUpdatedFoodData.단백질}, ${newUpdatedFoodData.지방}`
+      });
+      console.log('Food logged:', dietResponse.data);
+      //updatedFoodData.dietfoodUuid = response.data.dietfoodUuid;
+      newUpdatedFoodData.dietfoodUuid = dietResponse.data.dietfoodUuid;
+      // If the POST request is successful, update the meals list
+      /*
+      if (editedMealIndex !== null) {
+        // Update an existing meal
+        setTodaysMeals(prevMeals =>
+          prevMeals.map((meal, index) =>
+            index === editedMealIndex ? { ...meal, ...updatedFoodData } : meal
+          )
+        );
+      } else {
+        // Add a new meal if none is being edited
+        setTodaysMeals(prevMeals => [...prevMeals, { ...updatedFoodData, id: prevMeals.length }]);
+      }*/
+    } catch (error) {
+      // Handle the error if the POST request fails
+      console.error('Failed to log food:', error);
+    }
+
+    //setTodaysMeals(prevMeals => [...prevMeals, { ...updatedFoodData, id: prevMeals.length }]);
+    
   };
 
   const handleImageChange = (e) => {
@@ -206,6 +280,12 @@ function FoodOcr() {
       </div>
 
       
+      <div className="analyze-start-button" >
+      
+      <button onClick={() => handleCreateFood(nutritionData[selectedMeal])}
+      >사용자 지정 추가</button>
+
+      </div>
     </div>
 
     
