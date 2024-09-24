@@ -45,7 +45,7 @@ const LogPage = () => {
     bodyWeight: 0,
     height: 0,
     muscleMass: 0,
-    bodyFatMass: 0,
+    fatMass: 0,
     bmi: 0,
     bodyFatPercentage: 0,
     basalMetabolicRate: 0,
@@ -329,11 +329,11 @@ const LogPage = () => {
                 <div className="bar-container">
                     <div className="bar-label">체지방량</div>
                     <div className="bar">
-                        <div className="bar-fill" style={{ width: `${data.bodyFatMass}%` }}>
+                        <div className="bar-fill" style={{ width: `${data.fatMass}%` }}>
                             <span className="bar-text">체지방량</span>
                         </div>
                     </div>
-                    <div className="bar-value">{formatNumber(data.bodyFatMass)}</div>
+                    <div className="bar-value">{formatNumber(data.fatMass)}</div>
                 </div>
             </div>
     

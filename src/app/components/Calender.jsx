@@ -299,7 +299,7 @@ const RecordView = () => {
         {records.map((record) => (
           <div key={record.dietUuid} className="meal-record cursor-pointer"
           onClick={() => onRecordClick(mealType2)}>
-            <div className='font-semibold text-lg'>총 {record.totalCalories} kcal 섭취</div>
+            <div className='font-semibold text-lg'>총 {record.totalCalories.toFixed(2)} kcal 섭취</div>
             <div className='aadetails'>상세정보 확인 &gt;</div>
             {/* <div>탄수화물: {record.totalCarbohydrate}g</div>
             <div>단백질: {record.totalProtein}g</div>
